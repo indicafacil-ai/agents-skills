@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# SSH key helper for the fazer.ai agents onboarding. Two jobs:
+# SSH key helper for the Indica Fácil Agents onboarding. Two jobs:
 #   generate   create a dedicated ed25519 key and print the PUBLIC half for the operator to paste in the
 #              VPS panel. ssh-keygen is spawned with a DIRECT argv list (no shell) so the empty passphrase
 #              `-N ""` survives on every OS. Driven through a shell line, PowerShell DROPS the empty-string
@@ -113,8 +113,8 @@ def build_parser():
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     gen = sub.add_parser("generate", help="create ~/.ssh/<name> ed25519 (idempotent) and print the public key")
-    gen.add_argument("--name", required=True, help="bare key filename; use the fixed 'fazer-ai-agents' so re-runs reuse the same key (no per-run suffix)")
-    gen.add_argument("--comment", default="fazer-ai-onboarding", help="ssh-keygen -C comment")
+    gen.add_argument("--name", required=True, help="bare key filename; use the fixed 'indica-facil-agents' so re-runs reuse the same key (no per-run suffix)")
+    gen.add_argument("--comment", default="indica-facil-onboarding", help="ssh-keygen -C comment")
     gen.add_argument("--ssh-dir", default="", help="override the .ssh dir (default ~/.ssh; for tests)")
     gen.add_argument("--timeout", type=int, default=30)
     gen.set_defaults(fn=cmd_generate)

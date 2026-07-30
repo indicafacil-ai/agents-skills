@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Chatwoot admin access-token reader for the fazer.ai agents onboarding. The USER creates the first admin in
+# Chatwoot admin access-token reader for the Indica Fácil Agents onboarding. The USER creates the first admin in
 # the Chatwoot onboarding screen (account gate); this reads that admin (by --email, or the single admin of
 # the first account when --email is omitted) and returns its API access token; it never creates an account or
 # user. Runs a Rails runner INSIDE the Chatwoot container over SSH,
@@ -74,52 +74,45 @@ result =
 puts "RESULT_JSON:" + JSON.generate(result)
 '''
 
-# Re-runs the fazer.ai "check new versions" job so the hub-side subscription (Kanban/Pro) registers, then
-# reports the AUTHORITATIVE subscription state, never raw config values (could hold a secret).
-# jitter_applied:true is mandatory (else the job only reschedules, no sync). The `subscription` block is the
-# real signal: a 403/inactive ping STILL sets VERIFIED_AT while clearing the token, so "a FAZER_AI_SUBSCRIPTION_*
-# key exists" is NOT proof the subscription is active: `token_present` + `subscription_active` +
-# `kanban_enabled` are. Guarded for OSS (no FazerAiHub) so the same command is safe on any image.
+# Reports which edition is actually running and which accounts have the Kanban feature on. Read-only.
+#
+# NOTE: Pro is detected by the presence of the `kanban_boards` TABLE, not by a Ruby constant. Table
+# existence is the one signal that holds across fork builds and model namespaces — a constant name is
+# an implementation detail that renames out from under you.
+#
+# There is deliberately NO subscription/licence state here: our fork carries the Kanban CODE in the
+# private Pro image, and the runtime licence gate (Keygen) is not implemented yet — see
+# references/chatwoot-kanban-enable.md. Never report a licence state that does not exist.
 RUBY_REFRESH = r'''
 require 'json'
-Internal::CheckNewVersionsJob.perform_now(jitter_applied: true)
-names = InstallationConfig.where("name ILIKE '%subscription%' OR name ILIKE 'fazer%'").pluck(:name)
-diag = {}
-%w[FAZER_AI_SUBSCRIPTION_SYNC_ERROR_MESSAGE FAZER_AI_SUBSCRIPTION_VERIFIED_AT].each { |k| diag[k] = InstallationConfig.find_by(name: k)&.value }
-sub = { "token_present" => InstallationConfig.find_by(name: 'FAZER_AI_SUBSCRIPTION_TOKEN')&.value.present? }
-if defined?(FazerAiHub)
-  FazerAiHub.clear_cache!
-  sub["pro_image"] = true
-  sub["subscription_active"] = (FazerAiHub.subscription_active? rescue nil)
-  sub["kanban_enabled"] = (FazerAiHub.feature_enabled?('kanban') rescue nil)
-  sub["kanban_account_limit"] = (FazerAiHub.kanban_account_limit rescue nil)
-else
-  sub["pro_image"] = false
+pro = (ActiveRecord::Base.connection.table_exists?('kanban_boards') rescue false)
+accounts = Account.order(:id).limit(20).map do |a|
+  { "id" => a.id, "name" => a.name, "kanban_feature_enabled" => a.feature_enabled?('kanban') }
 end
-puts "RESULT_JSON:" + JSON.generate({"refreshed" => true, "config_keys" => names, "diagnostics" => diag, "subscription" => sub})
+puts "RESULT_JSON:" + JSON.generate({"pro_image" => pro, "accounts" => accounts})
 '''
 
-# Enables the Kanban feature FLAG on the account (`enable_features!('kanban')`). This is the account-level
-# activation the subscription only AUTHORIZES: with the Pro image + matched subscription, the flag is still
-# off until enabled here, and Kanban stays invisible. The model's own validation (`validate_kanban_limit`)
-# runs a fresh hub sync and refuses if the subscription doesn't grant Kanban (raises
-# `kanban_feature_not_available`) or the license account_limit is exceeded (`kanban_account_limit_reached`).
-# So this single op both activates AND proves the whole license/instance chain. Idempotent (no-op if already
-# enabled). Reports the real end state (`kanban_feature_enabled`/`kanban_ready`), never a secret.
+# Enables the Kanban feature FLAG on the account (`enable_features!('kanban')`). The Pro image carries the
+# Kanban CODE, but the flag is off until enabled here and the board stays invisible — that is the classic
+# trap. Idempotent (no-op if already enabled). Reports the real end state, never a secret.
+#
+# NOTE: Pro is detected by the presence of the `kanban_boards` TABLE, not by a Ruby constant — table
+# existence survives fork builds and model renames. Upstream gated this on its hub-licensing module and
+# additionally proved the licence chain here; our fork has no such gate yet (Keygen is pending, see
+# references/chatwoot-kanban-enable.md), so enabling the flag is the whole operation. If the fork later
+# grows a licence validation on the model, `enable_features!` will raise and land in `enable_error`.
 RUBY_ENABLE_KANBAN = r'''
 require 'json'
 result =
   begin
-    unless defined?(FazerAiHub)
-      { "error" => "not a Pro image (FazerAiHub absent): Kanban needs the chatwoot-pro image" }
+    unless (ActiveRecord::Base.connection.table_exists?('kanban_boards') rescue false)
+      { "error" => "not a Pro image (no kanban_boards table): Kanban needs the chatwoot-pro image" }
     else
       acc_id = "__ACCOUNT_ID__"
       acc = acc_id.empty? ? Account.order(:id).first : Account.find_by(id: acc_id.to_i)
       if acc.nil?
         { "error" => "no Chatwoot account (id=#{acc_id.empty? ? 'first' : acc_id}); finish the Chatwoot onboarding first" }
       else
-        Internal::CheckNewVersionsJob.perform_now(jitter_applied: true)
-        FazerAiHub.clear_cache!
         enable_error = nil
         unless acc.feature_enabled?('kanban')
           begin
@@ -131,14 +124,9 @@ result =
           end
         end
         acc.reload
-        FazerAiHub.clear_cache!
         {
           "account_id" => acc.id,
           "kanban_feature_enabled" => acc.feature_enabled?('kanban'),
-          "kanban_ready" => (acc.kanban_feature_enabled? rescue nil),
-          "subscription_active" => (FazerAiHub.subscription_active? rescue nil),
-          "subscription_kanban_enabled" => (FazerAiHub.feature_enabled?('kanban') rescue nil),
-          "kanban_account_limit" => (FazerAiHub.kanban_account_limit rescue nil),
           "enable_error" => enable_error
         }
       end
@@ -149,10 +137,10 @@ result =
 puts "RESULT_JSON:" + JSON.generate(result)
 '''
 
-# Lê a identidade da instância que o hub usa pra casar. O hub casa a instância ESTRITAMENTE pelo
+# Lê a identidade de instalação do Chatwoot (UUID + host). Guardada pra quando o licenciamento pelo
 # `installation_identifier` (o UUID de instalação do Chatwoot, config INSTALLATION_IDENTIFIER); o host
 # (FRONTEND_URL) é só metadado que o ping preenche depois. Logo o `installation_identifier` (UUID) é o
-# input do `agents hub create-instance --identifier <UUID>` / attach-license (NÃO o host). Read-only.
+# Keygen existir (Fase 3 do Kanban); hoje é só informativo. Read-only.
 RUBY_INSTALLATION_ID = r'''
 require 'json'
 ident = (InstallationConfig.find_by(name: 'INSTALLATION_IDENTIFIER')&.value rescue nil)
@@ -356,12 +344,12 @@ def build_parser():
     prov.set_defaults(fn=cmd_provision)
 
     refresh = sub.add_parser(
-        "refresh-subscription", parents=[ssh], help="run the fazer.ai Refresh job + report subscription config"
+        "refresh-subscription", parents=[ssh], help="run the Refresh job + report subscription config"
     )
     refresh.set_defaults(fn=cmd_refresh_subscription)
 
     idcmd = sub.add_parser(
-        "installation-id", parents=[ssh], help="read the instance identity the hub matches (host + uuid)"
+        "installation-id", parents=[ssh], help="read the Chatwoot installation identity (host + uuid)"
     )
     idcmd.set_defaults(fn=cmd_installation_id)
 

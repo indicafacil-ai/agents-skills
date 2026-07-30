@@ -1,4 +1,4 @@
-# Platform-neutral production stack for fazer.ai agents (Portainer / EasyPanel / plain `docker compose`
+# Platform-neutral production stack for Indica Fácil Agents (Portainer / EasyPanel / plain `docker compose`
 # on a VM). Coolify has its own file (docker-compose.coolify.yml, magic-vars); THIS file reads plain
 # env vars from a .env you generate with `bun scripts/gen-onboarding-env.ts` (writes every secret/URL
 # below, consistently). TLS + reverse proxy are EXTERNAL (Caddy/Traefik/Nginx Proxy Manager): this
@@ -17,9 +17,9 @@
 services:
   agents:
     # Edition-driven: Free (default, public image) vs Pro (set AGENTS_IMAGE to the private
-    # Harbor image, project `agents`, after `docker login` — hub: create_registry_credential, per-user).
+    # private GHCR image, after `docker login` — GitHub username + PAT with read:packages).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: ${AGENTS_IMAGE:-ghcr.io/fazer-ai/agents:latest}
+    image: ${AGENTS_IMAGE:-ghcr.io/nicolasdasilvaesilva/agents:latest}
     pull_policy: always
     restart: always
     # NOTE: no `command` here on purpose — the image's default entrypoint already runs, in order:
@@ -69,7 +69,7 @@ services:
   postgres:
     # pgvector image (NOT plain postgres): the schema needs CREATE EXTENSION vector. pg17 matches the
     # validated isolation spike. Not published to the host — only the app reaches it over the network.
-    image: 'pgvector/pgvector:pg17'
+    image: 'ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest'
     restart: always
     environment:
       - POSTGRES_DB=${DATABASE_NAME:-secretaria_v4_db}

@@ -1,4 +1,4 @@
-# Self-contained production stack for fazer.ai agents on Portainer (Tier B deploy) — and any host where
+# Self-contained production stack for Indica Fácil Agents on Portainer (Tier B deploy) — and any host where
 # you want TLS terminated INSIDE the stack instead of by an external proxy.
 #
 # Difference vs docker-compose.prod.yml: prod.yml only publishes the app's HTTP port and expects you to
@@ -66,9 +66,9 @@ services:
 
   agents:
     # Edition-driven: Free (default, public image) vs Pro (set AGENTS_IMAGE to the private
-    # Harbor image, project `agents`, after `docker login` — hub: create_registry_credential, per-user).
+    # private GHCR image, after `docker login` — GitHub username + PAT with read:packages).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: ${AGENTS_IMAGE:-ghcr.io/fazer-ai/agents:latest}
+    image: ${AGENTS_IMAGE:-ghcr.io/nicolasdasilvaesilva/agents:latest}
     pull_policy: always
     restart: always
     # NOTE: no `command` here on purpose — the image entrypoint runs, in order: db-bootstrap.ts (idempotent
@@ -114,7 +114,7 @@ services:
   postgres:
     # pgvector image (NOT plain postgres): the schema needs CREATE EXTENSION vector. pg17 matches the
     # validated isolation spike. Not published to the host — only the app reaches it over the network.
-    image: 'pgvector/pgvector:pg17'
+    image: 'ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest'
     restart: always
     environment:
       - POSTGRES_DB=${DATABASE_NAME:-secretaria_v4_db}

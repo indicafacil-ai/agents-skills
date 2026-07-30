@@ -6,20 +6,21 @@ Bifurca por edição. Pergunte ao desenvolvedor qual ele tem acesso, ou deduza: 
 
 Clone direto, sem credencial:
 ```sh
-git clone https://github.com/fazer-ai/agents.git fazer-ai-agents
+git clone https://github.com/nicolasdasilvaesilva/agents.git indica-facil-agents
 ```
-(O repo Free é `fazer-ai/agents`.)
+(O repo Free é `nicolasdasilvaesilva/agents`.)
 
-## Pro (repo privado via git proxy do hub)
+## Pro (repo privado no GitHub)
 
-O código Pro/Full (`fazer-ai/agents-pro`) é privado. O acesso é por **credencial per-user do hub** (a mesma que serve a marketplace de skills), usada como HTTP Basic no git proxy — não por convite direto no GitHub.
+O código Pro/Full (`nicolasdasilvaesilva/agents-pro`) é privado. O acesso é por **convite no GitHub** — não há proxy nem credencial intermediária.
 
-1. Logue no hub (`app.fazer.ai`) e obtenha a credencial git/NPM **per-user** (a mesma da marketplace de skills). No console do hub, o card de código-fonte Pro revela a credencial e o comando de clone prontos; uma credencial por usuário, válida em todas as suas máquinas.
-2. Clone autenticado pelo git proxy do hub (fetch-only — você não dá push aqui; contribuições vão pro repo Free):
+1. Peça acesso ao repositório. Autentique com o `gh` CLI (`gh auth login`) ou com um PAT de leitura.
+2. Clone:
 ```sh
-git clone https://<user>:<token>@app.fazer.ai/git/agents-pro.git fazer-ai-agents-pro
+git clone https://github.com/nicolasdasilvaesilva/agents-pro.git indica-facil-agents-pro
 ```
-3. **Nunca** logar o token nem commitá-lo.
+3. **Nunca** logar o token nem commitá-lo. Se usar PAT na URL do remote, ele fica em texto plano no
+   `.git/config` do clone — prefira o `gh` CLI ou um credential helper.
 
 ## Não-redistribuição (Pro)
 

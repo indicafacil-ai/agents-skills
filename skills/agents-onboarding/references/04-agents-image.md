@@ -1,20 +1,20 @@
-# 04: Deploy do fazer.ai agents
+# 04: Deploy do Indica Fácil Agents
 
-> **Avise o usuário onde você está:** o fazer.ai agents vem **depois do painel e do Chatwoot**; em seguida só falta o Langfuse. Diga que vai subir o fazer.ai agents agora e que leva alguns minutos; dê sinal de vida durante a espera longa e confirme ao terminar. Ver o princípio de narração (com a contagem que se ajusta ao caso real) em `SKILL.md`.
+> **Avise o usuário onde você está:** o Indica Fácil Agents vem **depois do painel e do Chatwoot**; em seguida só falta o Langfuse. Diga que vai subir o Indica Fácil Agents agora e que leva alguns minutos; dê sinal de vida durante a espera longa e confirme ao terminar. Ver o princípio de narração (com a contagem que se ajusta ao caso real) em `SKILL.md`.
 
 ## Edição: Free ou Pro (lê o marcador PRIMEIRO)
 
-Leia `~/.fazer-ai/onboarding.json` → `edition` (`free` | `pro`; ausente = `free`). É a escolha **explícita** do CLI; respeite-a. Eixo **independente** do `chatwootTier` (etapa 3).
+Leia `~/.indica-facil/onboarding.json` → `edition` (`free` | `pro`; ausente = `free`). É a escolha **explícita** do CLI; respeite-a. Eixo **independente** do `chatwootTier` (etapa 3).
 
-- **`free`** → imagem **pública** `ghcr.io/fazer-ai/agents:latest` (default do compose, multi-arch amd64/arm64). **Sem** `docker login`, não seta `AGENTS_IMAGE`.
-- **`pro`** → imagem **privada** no Harbor: `harbor.fazer.ai/agents/fazer-ai/agents-pro:latest`. Provisione a credencial **per-user** pelo **proxy do CLI** (`bunx @fazer-ai/agents hub registry-credential --apply --out harbor.secret`, robot per-user, grava o secret `0600` e imprime só o `username`), logue com `scripts/harbor-login.py login` (secret via `--secret-file harbor.secret`; protege o `$` do robot), e setar `AGENTS_IMAGE` pra esse path. **Nunca** logar o secret.
-  - **Reuso (per-user):** se o Chatwoot também for Pro (etapa 3), é o **mesmo** `docker login`, não logar duas vezes.
-  - **Tier A (Coolify):** setar a env `AGENTS_IMAGE` no serviço + registrar a Harbor registry credential no Coolify (igual ao Chatwoot Pro).
+- **`free`** → imagem **pública** `ghcr.io/nicolasdasilvaesilva/agents:latest` (default do compose, multi-arch amd64/arm64). **Sem** `docker login`, não seta `AGENTS_IMAGE`.
+- **`pro`** → imagem **privada** no GHCR: `ghcr.io/nicolasdasilvaesilva/agents-pro:latest`. A credencial é o seu usuário do GitHub + um **PAT** com o escopo `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Logue com `scripts/registry-login.py login` (token via `--secret-file ghcr.secret`, fora do argv) e sete `AGENTS_IMAGE` pra esse path. **Nunca** logar o token.
+  - **Reuso:** se o Chatwoot também for Pro (etapa 3), é o **mesmo** `docker login`, não logar duas vezes.
+  - **Tier A (Coolify):** setar a env `AGENTS_IMAGE` no serviço + registrar a registry credential no Coolify (igual ao Chatwoot Pro).
   - **Tier B/C (compose):** `export AGENTS_IMAGE=<imagem>` (ou no `.env`) antes do `docker compose up`.
 
 ## Compose
 
-Use o `templates/docker-compose.coolify.yml` do repo via `scripts/coolify.py create-service` (lê o compose, base64-encoda, POSTa em `/api/v1/services`). Topologia: `agents` (imagem conforme a **edição** acima; o compose default é a Free) + `postgres` (`pgvector/pgvector:pg17`: NÃO postgres puro: o schema precisa de `CREATE EXTENSION vector`). Volume `storage:/app/storage`. Healthcheck `wget -qO- http://localhost:3000/api/health`.
+Use o `templates/docker-compose.coolify.yml` do repo via `scripts/coolify.py create-service` (lê o compose, base64-encoda, POSTa em `/api/v1/services`). Topologia: `agents` (imagem conforme a **edição** acima; o compose default é a Free) + `postgres` (`ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest`: NÃO postgres puro: o schema precisa de `CREATE EXTENSION vector`). Volume `storage:/app/storage`. Healthcheck `wget -qO- http://localhost:3000/api/health`.
 
 ## Magic vars (Coolify gera; NÃO setar à mão)
 

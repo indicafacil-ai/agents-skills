@@ -40,13 +40,13 @@ agent_settings_set {
   ser `vault:<id>`; REST não resolve por nome).
 - A chave (OpenAI/ElevenLabs) é credencial do vault, preenchida por deeplink como qualquer outra (`08` §2).
 
-### Links de afiliado da fazer.ai (ElevenLabs + Asaas)
+### Links de cadastro dos provedores
 
 Quando o usuário **não tem conta** no ElevenLabs (voz) ou no Asaas (cobrança PIX), ofereça o **link de
-afiliado da fazer.ai** pra ele criar a conta. O mesmo link aparece na UI (no formulário de credencial, como
-"Não tem conta ainda? Crie pela fazer.ai"), então é o caminho consistente:
+de afiliado** pra ele criar a conta. O mesmo link aparece na UI (no formulário de credencial, como
+"Não tem conta ainda? Crie pelo nosso link"), então é o caminho consistente:
 
-- **ElevenLabs:** `https://try.elevenlabs.io/fazer-ai-agents-cli`
+- **ElevenLabs:** `https://try.elevenlabs.io/indica-facil-agents-cli`
 - **Asaas:** `https://www.asaas.com/r/5ec90fd5-677d-40c7-b577-cc1f6de62fec`
 
 Ofereça só quando fizer sentido (o usuário vai usar voz/cobrança e não tem conta): é conveniência, não

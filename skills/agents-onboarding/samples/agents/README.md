@@ -1,6 +1,6 @@
 # Sample agents
 
-Exemplos de agentes no schema de export **`fazer-ai.agent` v1** (o mesmo formato que `POST /v1/agents/import`
+Exemplos de agentes no schema de export **`indica-facil.agent` v1** (o mesmo formato que `POST /v1/agents/import`
 / a write tool `agent_import` do MCP consomem). Servem para testar o import, o onboarding e a documentação.
 
 | Arquivo | Persona |

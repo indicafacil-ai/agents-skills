@@ -1,4 +1,4 @@
-# Langfuse v3 (self-hosted) for fazer.ai: COOLIFY flavor.
+# Langfuse v3 (self-hosted) for Indica Fácil: COOLIFY flavor.
 #
 # WHY THIS FILE EXISTS
 # The Langfuse one-click/Coolify template ships the S3 env var NAMES but leaves the
@@ -78,7 +78,7 @@ services:
       # The agent provisions EVERYTHING on the first boot: a user (org owner) + org + project + key pair,
       # with AUTH_DISABLE_SIGNUP=true from the start (default above), so signup is never open. The operator
       # SIGNS IN (never signs up) with the seeded email + password and changes it; the agent already holds
-      # the keys (it generated them) and wires them into fazer.ai agents. One deploy, no redeploy, no open
+      # the keys (it generated them) and wires them into Indica Fácil Agents. One deploy, no redeploy, no open
       # signup window; this is Langfuse's own recommended headless-init pattern. See references/05-langfuse.md.
       # On Coolify the agent sets these via the service env editor / API before the (single) deploy.
       LANGFUSE_INIT_ORG_ID: '${LANGFUSE_INIT_ORG_ID:-}'

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Docker status helper for the fazer.ai agents onboarding. ONE job: read container status over SSH without
+# Docker status helper for the Indica Fácil Agents onboarding. ONE job: read container status over SSH without
 # the agent hand-quoting a `docker ps --format '{{...}}\t'` line. Driven through PowerShell->SSH, that line
 # gets MANGLED: the `{{...}}` braces and the `\t` are eaten/rewritten, so the agent improvises a broken
 # command and misreads "nothing running" (a real Windows-run footgun). This helper OWNS the format string

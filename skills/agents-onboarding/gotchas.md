@@ -6,7 +6,7 @@ Cada uma é uma armadilha conhecida. Leia a da etapa antes de executá-la.
 
 ### FQDN não dirige o Traefik (503 em todo serviço)
 
-Pra um **service** do Coolify, o Traefik lê `service_applications.fqdn` no DB; o env `SERVICE_FQDN_*` é **derivado** dele e NÃO move a rota. Sintoma: o serviço sobe mas dá 503 (cert 000), e o fazer.ai agents bootou com `publicUrl` sslip.io.
+Pra um **service** do Coolify, o Traefik lê `service_applications.fqdn` no DB; o env `SERVICE_FQDN_*` é **derivado** dele e NÃO move a rota. Sintoma: o serviço sobe mas dá 503 (cert 000), e o Indica Fácil Agents bootou com `publicUrl` sslip.io.
 
 Fix via `scripts/coolify.py` (base64-pipa o psql; o restart não monta curl com token à mão):
 
@@ -26,9 +26,9 @@ No Git Bash/MSYS do Windows, um argumento que começa com `/` (ex.: `coolify.py 
 
 `POST /api/v1/services` com o compose cru → 422 "should be base64 encoded". O `scripts/coolify.py create-service` faz o base64 do `--compose-file`; se POSTar à mão via `api-post`, encode antes.
 
-### NÃO sobrescrever `command:` no compose do fazer.ai agents
+### NÃO sobrescrever `command:` no compose do Indica Fácil Agents
 
-O boot (`bootstrap → migrate → serve`) é o CMD da imagem. Um `command:` override já derivou pro `./server` obsoleto e crash-loopou (`exec: ./server: not found`). Não declare `command:` no compose do fazer.ai agents.
+O boot (`bootstrap → migrate → serve`) é o CMD da imagem. Um `command:` override já derivou pro `./server` obsoleto e crash-loopou (`exec: ./server: not found`). Não declare `command:` no compose do Indica Fácil Agents.
 
 ### Instance Domain do Coolify
 
@@ -87,19 +87,19 @@ Não há heredoc (`<<'EOF'` é só POSIX) nem `<` de stdin no PowerShell, por is
 | Python local | `@'…'@ \| python -` | escreva o `.py`, rode `python x.py` |
 | JSON de API | `'{…}' \| helper`, `-d '{…}'` | `coolify.py api-post … --json-file x.json` |
 | criar/editar arquivo | `echo`/`Set-Content`/`Out-File >` | a ferramenta de edição do agente |
-| config do fazer.ai agents | (qualquer inline acima) | tools de **MCP** |
+| config do Indica Fácil Agents | (qualquer inline acima) | tools de **MCP** |
 
 `remote.py` alimenta o `bash -s` (ou `docker exec -i … psql/runner`) remoto via **stdin por argv direto**: aspas, `$()`, `{{…}}`, `(`, `\`, heredoc e múltiplas linhas chegam **byte a byte em qualquer SO**. Saída ao vivo (instalação longa não estoura timeout), exit code propagado; `--capture` devolve `{ok,exit_code,stdout,stderr}` JSON pra parsear; `--dry-run` mostra o argv. **Só** um comando de **uma linha sem** `"`/`$()`/`{{…}}`/`(`/`\` pode ir inline (`ssh <host> 'hostname; docker ps -q'`). Os helpers de caso específico seguem como atalho (`docker-status.py` p/ `docker ps`, `coolify.py` p/ os fluxos de Coolify, `chatwoot-admin.py` p/ ler o admin/token do Chatwoot); pra **qualquer outro** script remoto/console, `remote.py`.
 
 ## Edições (imagens Free/Pro)
 
-### fazer.ai agents Pro ≠ licença Chatwoot avulsa (precisa da comunidade)
+### Indica Fácil Agents Pro ≠ licença Chatwoot avulsa (precisa da comunidade)
 
-A edição **Pro** do fazer.ai agents (`edition: "pro"`, marcador) usa imagem privada no Harbor (projeto `agents`), liberada **só pra membros da comunidade** (`isCommunityGrant`). Uma licença Chatwoot Pro **avulsa** NÃO desbloqueia o fazer.ai agents. A robot do Harbor é **per-user** (cobre a união dos projetos a que o usuário tem acesso): se Chatwoot e o fazer.ai agents são ambos Pro, é **um único** `docker login`: não logue duas vezes. `free` = imagem pública, **sem** `docker login`.
+A edição **Pro** do Indica Fácil Agents (`edition: "pro"`, marcador) usa imagem privada no GHCR, liberada **só pra membros da comunidade** (`isCommunityGrant`). Uma licença Chatwoot Pro **avulsa** NÃO desbloqueia o Indica Fácil Agents. O PAT de leitura do GHCR é **seu** (cobre todos os pacotes privados a que a sua conta tem acesso): se Chatwoot e o Indica Fácil Agents são ambos Pro, é **um único** `docker login`: não logue duas vezes. `free` = imagem pública, **sem** `docker login`.
 
 ### Chatwoot OSS não faz `docker login` (mas inclui Baileys)
 
-`chatwootTier: "community"` (OSS) usa a imagem pública `ghcr.io/fazer-ai/chatwoot` (nosso fork), **sem** `docker login` no Harbor. O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/fazer-ai/baileys-api`, parte do fork — **não** remova). Só o `pro` faz `docker login` no Harbor + imagem privada `chatwoot-pro` (o que o Pro adiciona é o **Kanban**, não o Baileys). **Não** rode `docker login` nem provisione credencial do Harbor no caminho OSS (não há licença, e o pull público não precisa dela).
+`chatwootTier: "community"` (OSS) usa a imagem pública `ghcr.io/nicolasdasilvaesilva/chatwoot` (nosso fork), **sem** `docker login` no GHCR. O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/nicolasdasilvaesilva/baileys-api`, parte do fork — **não** remova). Só o `pro` faz `docker login` no GHCR + imagem privada `chatwoot-pro` (o que o Pro adiciona é o **Kanban**, não o Baileys). **Não** rode `docker login` nem provisione credencial de registry no caminho OSS (o pull público não precisa dela).
 
 ## Langfuse
 
@@ -107,7 +107,7 @@ A edição **Pro** do fazer.ai agents (`edition: "pro"`, marcador) usa imagem pr
 
 Langfuse v3 exige S3 blob storage na ingestion. O one-click sobe sem MinIO e com `LANGFUSE_S3_*` vazias → `POST /ingestion` dá HTTP 500 e os traces nunca chegam; o `GET /projects` (só Postgres) retorna 200 e mascara. **Use `templates/langfuse/docker-compose.coolify.yml`** (com MinIO) e valide com `scripts/langfuse-verify.py ingestion` (espere 207, não 500). Detalhe em `references/05-langfuse.md`.
 
-## Config do fazer.ai agents (pós-import)
+## Config do Indica Fácil Agents (pós-import)
 
 ### MCP/SUPER_ADMIN: mire o tenant com o argumento `tenant`, não crie um tenant
 
@@ -133,7 +133,7 @@ O export referencia tudo **por nome**, e os nomes não existem no tenant novo. O
 
 ### `POST /api/v1/api-keys`: o campo é `displayName`
 
-Mintar a API key do fazer.ai agents com `{ "name": ... }` → 422. O campo é `displayName`. O `token` vem só uma vez.
+Mintar a API key do Indica Fácil Agents com `{ "name": ... }` → 422. O campo é `displayName`. O `token` vem só uma vez.
 
 ### vault POST usa `baseUrl` (camelCase)
 
@@ -143,7 +143,7 @@ Mintar a API key do fazer.ai agents com `{ "name": ... }` → 422. O campo é `d
 
 ### Box bun-only: não chame `node`
 
-A máquina do operador pode ter **só `bun`** (sem `node` no PATH): `node helper.js` dá `CommandNotFoundException`. Não escreva helpers Node ad-hoc e não invoque `node`: rode os scripts com **`bun`** (e prefira os helpers vendorados da skill, `scripts/*.py`/`*.ts`, em vez de improvisar). As ops do hub saem pelo proxy `bunx @fazer-ai/agents hub …`, não por um helper Node escrito na hora.
+A máquina do operador pode ter **só `bun`** (sem `node` no PATH): `node helper.js` dá `CommandNotFoundException`. Não escreva helpers Node ad-hoc e não invoque `node`: rode os scripts com **`bun`** (e prefira os helpers vendorados da skill, `scripts/*.py`/`*.ts`, em vez de improvisar). Não há hub central: registry é GHCR + PAT, e o licenciamento do Kanban está pendente.
 
 ### Esperas de gate humano: em background, nunca em foreground
 
@@ -153,5 +153,5 @@ Os polls que esperam uma ação do usuário no browser (`coolify.py wait-admin` 
 
 - **TTS:** precisa de chave ElevenLabs real.
 - **Visão:** usa a **mesma chave OpenAI** do modelo/STT (o sample configura visão via OpenAI, `gpt-4o`); não precisa de chave separada. OpenAI lê imagens, não documentos.
-- **WhatsApp físico:** opcional; exige um número que o usuário controle. A integração Chatwoot→fazer.ai agents já é provada sem aparelho via Inbox API (etapa 10); o físico só confirma o transporte real.
-- **Kanban:** condicional à licença, **não** "opcional". Com licença disponível (CLI/`hub licenses`), habilitar é **happy-path** (ver `references/chatwoot-hub-register.md`), mas exige **três** coisas, todas necessárias: imagem Pro + assinatura casada no hub + feature ligada na conta. Duas pegadinhas que já travaram um onboarding com tudo "verde": (1) o hub casa a instância pelo **UUID de instalação**, não pelo host, e criar a instância com o host faz a assinatura verificar mas nunca conceder; (2) a assinatura só **autoriza** o Kanban, o flag por-conta é um passo separado (`enable-kanban`). O sinal autoritativo é `kanban_feature_enabled: true`, não "o Refresh rodou". Sem licença → OSS, sem Kanban.
+- **WhatsApp físico:** opcional; exige um número que o usuário controle. A integração Chatwoot→Indica Fácil Agents já é provada sem aparelho via Inbox API (etapa 10); o físico só confirma o transporte real.
+- **Kanban:** condicional à **imagem Pro**, **não** "opcional". Com a imagem Pro no ar, habilitar é **happy-path** (ver `references/chatwoot-kanban-enable.md`), mas exige **três** coisas, todas necessárias: imagem Pro + assinatura casada no hub + feature ligada na conta. Duas pegadinhas que já travaram um onboarding com tudo "verde": (1) o hub casa a instância pelo **UUID de instalação**, não pelo host, e criar a instância com o host faz a assinatura verificar mas nunca conceder; (2) a assinatura só **autoriza** o Kanban, o flag por-conta é um passo separado (`enable-kanban`). O sinal autoritativo é `kanban_feature_enabled: true`, não "o Refresh rodou". Sem licença → OSS, sem Kanban.

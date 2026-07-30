@@ -1,21 +1,21 @@
 ---
 name: agents-dev
-description: "Modo desenvolvedor do fazer.ai agents: trabalhar no código-fonte. Clona o repo (Free público ou Pro via git proxy do hub), orienta nas boas práticas e invariantes (separação Free/Full, aditividade e convenções de docs/), pergunta proativamente o que o usuário quer implementar e conduz a implementação, e ajuda a gerar a própria imagem de deploy. Use quando o usuário quer DESENVOLVER, estender ou contribuir com o código do fazer.ai agents, não apenas subir (onboarding) ou operar (operação) uma instância."
+description: "Modo desenvolvedor do Indica Fácil Agents: trabalhar no código-fonte. Clona o repo (Free público ou Pro por convite no GitHub), orienta nas boas práticas e invariantes (separação Free/Full, aditividade e convenções de docs/), pergunta proativamente o que o usuário quer implementar e conduz a implementação, e ajuda a gerar a própria imagem de deploy. Use quando o usuário quer DESENVOLVER, estender ou contribuir com o código do Indica Fácil Agents, não apenas subir (onboarding) ou operar (operação) uma instância."
 ---
 
-# Modo desenvolvedor do fazer.ai agents
+# Modo desenvolvedor do Indica Fácil Agents
 
 Leva um desenvolvedor de "quero mexer no código" até "implementou com as boas práticas do projeto e, se quiser, gerou a própria imagem". Audiência: **desenvolvedor**, não operador. Para subir uma instância do zero use a skill `agents-onboarding`; para debugar/ajustar uma instância em produção use `agents-operation`.
 
 ## ⚠️ Distribuição: o Pro é privado
 
-- O **repositório Pro/Full** (`fazer-ai/agents-pro`) e a **imagem Pro** são **privados**. **Nunca** publique o código, a imagem, ou trechos exclusivos do Full em local público (gist, fork público, registry público, post, screenshot).
+- O **repositório Pro/Full** (`nicolasdasilvaesilva/agents-pro`) e a **imagem Pro** são **privados**. **Nunca** publique o código, a imagem, ou trechos exclusivos do Full em local público (gist, fork público, registry público, post, screenshot).
 - O acesso ao Pro é concedido individualmente. Vazar repo/imagem quebra esse modelo.
-- **Sugestões e contribuições vão para o repositório Free** (open-source): `fazer-ai/agents`. Abra issues/PRs lá.
+- **Sugestões e contribuições vão para o repositório Free** (open-source): `nicolasdasilvaesilva/agents`. Abra issues/PRs lá.
 
 ## Fluxo
 
-1. **Obter o código** (`references/00-get-the-code.md`), bifurca por edição: Free clona o repo público (sem credencial); Pro clona via git proxy do hub (credencial per-user).
+1. **Obter o código** (`references/00-get-the-code.md`), bifurca por edição: Free clona o repo público (sem credencial); Pro clona o repo privado (convite no GitHub).
 2. **Layout + porta de qualidade** (`references/01-layout-and-bun-check.md`): mapa do repo, `bun install`/`bun dev`, o ciclo `bun check`.
 3. **Aditividade + invariantes** (`references/02-free-full-and-invariants.md`): aditividade e onde estão as convenções e os docs por subsistema.
 4. **Implementação conduzida** (`references/03-implement.md`): perguntar o que implementar, desenhar desafiando premissas, implementar no estilo vizinho, validar.

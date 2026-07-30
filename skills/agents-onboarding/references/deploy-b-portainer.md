@@ -13,7 +13,7 @@ por-plataforma do [contrato (1c)](01c-pick-tier.md); os invariantes (duas roles 
 | --- | --- |
 | `templates/docker-compose.portainer.yml` | agents + Postgres + **Caddy bundled** (auto-HTTPS). Self-contained (uma string pro Portainer). |
 | `scripts/gen-onboarding-env.ts` | Gera o `.env` (duas roles de DB, JWT/ENCRYPTION, `CADDY_DOMAIN`, `ACME_EMAIL` opcional). |
-| `templates/chatwoot/` | Stack do Chatwoot, Pro (Harbor) ou OSS (público): um compose genérico, edição por env. Ver [`03-chatwoot-pro.md`](03-chatwoot-pro.md). |
+| `templates/chatwoot/` | Stack do Chatwoot, Pro (privada) ou OSS (pública): um compose genérico, edição por env. Ver [`03-chatwoot-pro.md`](03-chatwoot-pro.md). |
 | `templates/langfuse/` | Langfuse opcional (tracing); inclui o MinIO que a ingestion v3 exige. Ver [`05-langfuse.md`](05-langfuse.md). |
 | `scripts/portainer-brownfield.py` | Descoberta brownfield read-only (inventário + decisão por serviço) via a API do Portainer. |
 
@@ -29,10 +29,9 @@ Caddyfile a partir do env no boot (`CADDY_DOMAIN` → o app; `PORTAINER_DOMAIN` 
 - **DNS**: A-records pro FQDN do app (ex. `agents.<domínio>`) e, se quiser o painel num domínio limpo,
   `portainer.<domínio>` → o IP do VPS. O ACME valida contra eles, então têm que resolver **antes** do deploy.
 - **Credenciais de registry** pras imagens privadas (configure uma vez no Portainer, passe `Registries:[id]`).
-  Só o Harbor precisa: `ghcr.io/fazer-ai/agents` (Free), `pgvector` e `baileys-api` são **públicas**, puxam sem login.
-  - `harbor.fazer.ai` pro Chatwoot **Pro** (e fazer.ai agents Pro): a registry credential **per-user**, provisionada
-    pelo proxy do CLI (`bunx @fazer-ai/agents hub registry-credential --apply --out harbor.secret`; imprime o
-    `username`, grava o secret em `harbor.secret`). Chatwoot OSS não precisa de registry privado.
+  Só a privada precisa: `ghcr.io/nicolasdasilvaesilva/agents` (Free), `pgvector` e `baileys-api` são **públicas**, puxam sem login.
+  - `ghcr.io` pro Chatwoot **Pro** (e Indica Fácil Agents Pro): usuário do GitHub + um **PAT** com o escopo
+    `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Chatwoot OSS não precisa de registry privado.
 
 ## 1. Instalar o Portainer
 
@@ -61,7 +60,7 @@ curl -sk -X POST https://localhost:9443/api/registries -H "X-API-Key: <api-key>"
   -d '{"Name":"ghcr","Type":3,"URL":"ghcr.io","Authentication":true,"Username":"<gh-user>","Password":"<gh-token>"}'
 # Só Pro:
 curl -sk -X POST https://localhost:9443/api/registries -H "X-API-Key: <api-key>" -H 'Content-Type: application/json' \
-  -d '{"Name":"harbor","Type":3,"URL":"harbor.fazer.ai","Authentication":true,"Username":"robot$...","Password":"<secret>"}'
+  -d '{"Name":"ghcr","Type":3,"URL":"ghcr.io","Authentication":true,"Username":"<seu-usuario-github>","Password":"<secret>"}'
 ```
 
 `Type:3` é registry Custom (serve pra qualquer). Capture cada `Id` e passe no array `Registries` do stack
@@ -118,7 +117,7 @@ PORTAINER_API_KEY=$KEY PORTAINER_ENDPOINT_ID=1 python3 scripts/portainer-brownfi
 Ele lista os stacks, faz fingerprint de cada container por imagem, sinaliza **quem ocupa 80/443** (um
 ingress existente faz o stack Caddy-bundled conflitar → reuse-o ou troque pro `templates/docker-compose.prod.yml`
 BYO-proxy) e imprime uma matriz de decisão: `agents` saudável → reusa; Chatwoot presente → reusa
-(`chatwoot-pro` Harbor e OSS são ambos válidos); Chatwoot ausente → instala Pro se há assinatura no hub,
+(`chatwoot-pro` privada e OSS são ambos válidos); Chatwoot ausente → instala Pro se houver acesso à imagem privada,
 senão OSS; Langfuse ausente → instala só se selecionado.
 
 ## Gotcha: o header de auth do Chatwoot pelo Caddy bundled
@@ -128,7 +127,7 @@ descartam headers com underscore no nome (nginx tem `underscores_in_headers off`
 Chatwoot também descarta). Efeito: o mesmo admin token enviado ao Chatwoot **pelo Caddy** como
 `api_access_token` é rejeitado (401), enquanto **direto no puma** (sem proxy) autentica (200). O Rails
 (Rack) mapeia `-` e `_` pra mesma env var, então a grafia com **hífen** `api-access-token` é lida igual
-pelo Chatwoot **e** sobrevive ao Caddy (200). O fazer.ai agents **manda o hífen** por padrão, então `deployment_connect`
+pelo Chatwoot **e** sobrevive ao Caddy (200). O Indica Fácil Agents **manda o hífen** por padrão, então `deployment_connect`
 e as tools HTTP do agente funcionam contra a URL pública fronteada pelo Caddy sem workaround. Se você
 escrever uma integração Chatwoot à mão, use `api-access-token`, nunca o underscore.
 

@@ -1,4 +1,4 @@
-# Langfuse v3 (self-hosted) for fazer.ai: GENERIC flavor (Portainer / EasyPanel / Dokploy / plain Docker).
+# Langfuse v3 (self-hosted) for Indica Fácil: GENERIC flavor (Portainer / EasyPanel / Dokploy / plain Docker).
 #
 # Same topology as ./docker-compose.coolify.yml, but every secret comes from a .env you fill in
 # manually (Coolify generates those automatically; here you don't have that, so see ./.env.example
@@ -74,7 +74,7 @@ services:
       # The agent provisions EVERYTHING on the first boot: a user (org owner) + org + project + key pair,
       # with AUTH_DISABLE_SIGNUP=true from the start (default above), so signup is never open. The operator
       # SIGNS IN (never signs up) with the seeded email + password and changes it; the agent already holds
-      # the keys (it generated them) and wires them into fazer.ai agents. One deploy, no redeploy, no open
+      # the keys (it generated them) and wires them into Indica Fácil Agents. One deploy, no redeploy, no open
       # signup window; this is Langfuse's own recommended headless-init pattern. See references/05-langfuse.md.
       LANGFUSE_INIT_ORG_ID: '${LANGFUSE_INIT_ORG_ID:-}'
       LANGFUSE_INIT_ORG_NAME: '${LANGFUSE_INIT_ORG_NAME:-}'

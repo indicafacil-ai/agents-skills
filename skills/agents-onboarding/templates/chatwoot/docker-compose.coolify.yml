@@ -1,14 +1,14 @@
-# Chatwoot for fazer.ai: COOLIFY flavor (magic vars; Coolify auto-generates the SERVICE_* secrets).
-# Edition by CHATWOOT_IMAGE: default = Pro (private Harbor image); for OSS set
-# CHATWOOT_IMAGE=ghcr.io/fazer-ai/chatwoot:latest (our public fork). Baileys (baileys-api) runs in
+# Chatwoot for Indica Fácil: COOLIFY flavor (magic vars; Coolify auto-generates the SERVICE_* secrets).
+# Edition by CHATWOOT_IMAGE: default = Pro (private GHCR image); for OSS set
+# CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot:latest (our public fork). Baileys (baileys-api) runs in
 # BOTH editions — its image is public, so OSS keeps it.
-# Pro pull needs the Harbor registry credential configured in Coolify (hub: per-user credential); OSS needs none.
+# Pro pull needs the registry credential configured in Coolify (GitHub username + PAT with read:packages); OSS needs none.
 # Set the service Domain in Coolify to your Chatwoot FQDN (fills SERVICE_URL_CHATWOOT).
 # This is the compose validated in the RUN 2 Coolify deploy; the generic/Portainer flavor is ./docker-compose.yml.
 
 services:
   chatwoot:
-    image: '${CHATWOOT_IMAGE:-harbor.fazer.ai/chatwoot/fazer-ai/chatwoot-pro:latest}'
+    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -50,7 +50,7 @@ services:
       timeout: 10s
       retries: 5
   sidekiq:
-    image: '${CHATWOOT_IMAGE:-harbor.fazer.ai/chatwoot/fazer-ai/chatwoot-pro:latest}'
+    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -86,7 +86,7 @@ services:
       timeout: 10s
       retries: 5
   postgres:
-    image: 'ghcr.io/fazer-ai/pgvector:16'
+    image: 'ghcr.io/nicolasdasilvaesilva/postgres-16-pgvector:latest'
     restart: always
     volumes:
       - 'postgres:/var/lib/postgresql/data'
@@ -113,7 +113,7 @@ services:
       timeout: 20s
       retries: 10
   baileys-api:
-    image: 'ghcr.io/fazer-ai/baileys-api:latest'
+    image: 'ghcr.io/nicolasdasilvaesilva/baileys-api:latest'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Concurrent-customer load simulator for a fazer.ai agents deployment (agents-operation skill).
+# Concurrent-customer load simulator for a Indica Fácil Agents deployment (agents-operation skill).
 #
 # Drives N simultaneous "customers in service" against a Chatwoot `Channel::Api` inbox that is bound to the
 # agent: for each persona it creates a contact + conversation and injects INCOMING messages, exactly like the

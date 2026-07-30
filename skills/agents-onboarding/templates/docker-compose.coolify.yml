@@ -1,10 +1,10 @@
 services:
   agents:
     # Edition-driven: Free (default, public image) vs Pro — for Pro, set the AGENTS_IMAGE env on
-    # the Coolify service to the private Harbor image (project `agents`) AND register the Harbor
-    # registry credential in Coolify (hub: create_registry_credential, per-user, same as Chatwoot Pro).
+    # the Coolify service to the private GHCR image (project `agents`) AND register the
+    # registry credential in Coolify (GitHub username + PAT with read:packages, same as Chatwoot Pro).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: '${AGENTS_IMAGE:-ghcr.io/fazer-ai/agents:latest}'
+    image: '${AGENTS_IMAGE:-ghcr.io/nicolasdasilvaesilva/agents:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -57,7 +57,7 @@ services:
   postgres:
     # pgvector image (NOT plain postgres): the schema needs CREATE EXTENSION vector. pg17 matches
     # the validated isolation spike.
-    image: 'pgvector/pgvector:pg17'
+    image: 'ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest'
     restart: always
     volumes:
       - 'postgres:/var/lib/postgresql/data'

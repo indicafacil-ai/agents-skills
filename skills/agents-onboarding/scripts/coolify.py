@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Coolify onboarding helper (Tier A) for fazer.ai agents. Wraps the FRAGILE, deterministic mechanics of
+# Coolify onboarding helper (Tier A) for Indica Fácil Agents. Wraps the FRAGILE, deterministic mechanics of
 # driving a Coolify instance during onboarding so the agent CALLS them instead of hand-assembling shell:
 #   token           mint a root API token over SSH (artisan tinker; seeds currentTeam) -> 0600 file
 #   enable-api      flip is_api_enabled=true (psql over SSH); the API is OFF by default (403 otherwise)
@@ -490,7 +490,7 @@ def build_parser():
     p_token = sub.add_parser("token", parents=[ssh], help="mint a root API token over SSH -> 0600 file")
     p_token.add_argument("--out", required=True, help="file to write the token to (chmod 600)")
     p_token.add_argument("--container", default="coolify", help="Coolify app container (default: coolify)")
-    p_token.add_argument("--token-name", default="fazer-ai-onboarding")
+    p_token.add_argument("--token-name", default="indica-facil-onboarding")
     p_token.set_defaults(fn=cmd_token)
 
     p_enable = sub.add_parser("enable-api", parents=[ssh, db], help="set is_api_enabled=true (psql over SSH)")

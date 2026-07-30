@@ -5,7 +5,7 @@
 - Agente importado e habilitado (`enabled:true`), **em test mode** (`mode:test`, como importado; a validação abaixo roda nesse modo via `/teste`; promover pra produção é decisão do usuário, etapa 8), modelo religado a uma vault key real (etapa 8).
 - KB com docs **READY** (etapa 8).
 - Inbox do Chatwoot bound ao agente, bot `active` (etapa 9).
-- Langfuse com ingestion **207** + wired no fazer.ai agents (etapas 5 e 8).
+- Langfuse com ingestion **207** + wired no Indica Fácil Agents (etapas 5 e 8).
 
 ## 1. Playground (modelo real, sem Chatwoot)
 
@@ -34,15 +34,15 @@ Pareie a inbox real (Baileys via QR) com um número que o usuário controle e ma
 
 ## 3. Traces no Langfuse
 
-- Confirme que o turn aparece no Langfuse (env `production-playground` ou `production`, session = threadId do fazer.ai agents). A ingestion já foi validada em 207 na etapa 5.
+- Confirme que o turn aparece no Langfuse (env `production-playground` ou `production`, session = threadId do Indica Fácil Agents). A ingestion já foi validada em 207 na etapa 5.
 
 ## 4. Kanban / assinatura Pro (OBRIGATÓRIO quando o tier é Pro)
 
 Só se aplica ao **Chatwoot Pro com licença** (etapa 9b); em OSS/community pule (não há Kanban). **Imagem Pro não basta, e assinatura ativa também não:** o Kanban depende de três coisas (imagem + assinatura casada + feature ligada na conta). Valide o **estado-fim real na conta**, não que o sync rodou:
 
 - Rode `chatwoot-admin.py enable-kanban` (etapa 9b, passo 5) e confirme `kanban_feature_enabled: true`. Esse é o sinal autoritativo: o comando liga a feature na conta E, pela validação do próprio Chatwoot, **só passa se a assinatura casar** (senão sai com `kanban_feature_not_available`). Idempotente, então rodar de novo na validação é seguro.
-- Confirmação visual do mesmo estado: `/super_admin/settings` → "fazer.ai Subscription" ativa, board de Kanban visível no Chatwoot.
-- `kanban_feature_enabled: false` (ou o comando saiu com erro) → a etapa 9b **não** fechou: leia o `enable_error` e volte pra `chatwoot-hub-register.md` (`kanban_feature_not_available` = instância/licença não casou, quase sempre por ter criado a instância com o host em vez do **UUID**; confira o casamento por UUID nos passos 1 a 4). Resolva antes de declarar o onboarding concluído. **Não** aceite "o Refresh rodou / `VERIFIED_AT` está preenchido" como prova: um 403/inativo do hub grava `VERIFIED_AT` e mesmo assim deixa o Kanban travado.
+- Confirmação visual do mesmo estado: `/super_admin/settings` → "Indica Fácil Subscription" ativa, board de Kanban visível no Chatwoot.
+- `kanban_feature_enabled: false` (ou o comando saiu com erro) → a etapa 9b **não** fechou: leia o `enable_error` e volte pra `chatwoot-kanban-enable.md` (`kanban_feature_not_available` = instância/licença não casou, quase sempre por ter criado a instância com o host em vez do **UUID**; confira o casamento por UUID nos passos 1 a 4). Resolva antes de declarar o onboarding concluído. **Não** aceite "o Refresh rodou / `VERIFIED_AT` está preenchido" como prova: um 403/inativo do hub grava `VERIFIED_AT` e mesmo assim deixa o Kanban travado.
 
 ## Critério de aceite
 

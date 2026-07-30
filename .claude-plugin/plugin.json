@@ -1,11 +1,11 @@
 {
   "name": "agents",
   "version": "1.1.9",
-  "description": "Skills do fazer.ai agents: onboarding (subir do zero num VPS), desenvolvimento (mexer no código) e operação (debugar em produção).",
+  "description": "Skills do Indica Fácil Agents: onboarding (subir do zero num VPS), desenvolvimento (mexer no código) e operação (debugar em produção).",
   "author": {
-    "name": "fazer.ai",
-    "url": "https://fazer.ai"
+    "name": "Indica Fácil",
+    "url": "https://indicafacil.app"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://app.fazer.ai"
+  "homepage": "https://indicafacil.app"
 }

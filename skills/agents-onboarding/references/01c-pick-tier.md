@@ -1,7 +1,7 @@
 # 01c: Selecionar o tier de deploy + o contrato
 
 Depois do inventário brownfield (1b) você sabe **o que já existe** na VPS. Agora escolha **a trilha de
-deploy** (qual orquestrador sobe Chatwoot + fazer.ai agents + Langfuse com TLS) e siga só ela. As etapas 6 a 10 (a
+deploy** (qual orquestrador sobe Chatwoot + Indica Fácil Agents + Langfuse com TLS) e siga só ela. As etapas 6 a 10 (a
 **espinha**: `/setup` → MCP → import → bind → E2E) são **idênticas em qualquer tier**: elas
 consomem o *resultado* do deploy, não se importam com *como* ele foi feito.
 
@@ -42,12 +42,12 @@ Qualquer que seja o tier, o segmento de deploy termina quando **entrega exatamen
 
 Entregou os 5 → vá direto pra **etapa 6** (a mesma pra todos os tiers).
 
-> **Chatwoot existente (`chatwootSource: existing` no marcador):** só **fazer.ai agents + Langfuse** a provisionar: `chatwoot.<domínio>` é a instância que **já está no ar** (não a crie nem lhe mexa; o item 1 e o deploy do Chatwoot da trilha do tier são pulados). O admin token (item 4) vem via **Rails runner** se a instância é on-box/alcançável por SSH; se for **off-box** (Chatwoot Cloud / outro host), o **usuário fornece** um admin API token (Chatwoot → Profile → Access Token). O bind (etapa 9) usa a URL pública + esse token.
+> **Chatwoot existente (`chatwootSource: existing` no marcador):** só **Indica Fácil Agents + Langfuse** a provisionar: `chatwoot.<domínio>` é a instância que **já está no ar** (não a crie nem lhe mexa; o item 1 e o deploy do Chatwoot da trilha do tier são pulados). O admin token (item 4) vem via **Rails runner** se a instância é on-box/alcançável por SSH; se for **off-box** (Chatwoot Cloud / outro host), o **usuário fornece** um admin API token (Chatwoot → Profile → Access Token). O bind (etapa 9) usa a URL pública + esse token.
 
 ## Invariantes (valem em todos os tiers)
 
-- **`pgvector/pgvector:pg17`**, nunca Postgres puro: o schema roda `CREATE EXTENSION vector`.
-- **Réplica única** do fazer.ai agents: os workers (scheduler/debounce/outbound) assumem um único líder; não escale o
+- **`ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest`**, nunca Postgres puro: o schema roda `CREATE EXTENSION vector`.
+- **Réplica única** do Indica Fácil Agents: os workers (scheduler/debounce/outbound) assumem um único líder; não escale o
   serviço `agents` pra >1 (ver o aviso no `templates/docker-compose.prod.yml`).
 - **DNS antes do ACME**: o cert só emite com o A-record já resolvendo pro IP da VPS. Crie os A-records
   (etapa 1) e confirme a resolução com o poll `until [ "$(dig +short <sub>.<domínio> @1.1.1.1 | tail -1)" =
@@ -56,7 +56,7 @@ Entregou os 5 → vá direto pra **etapa 6** (a mesma pra todos os tiers).
   *bundled* do `templates/docker-compose.portainer.yml` **conflita**:
   reuse o proxy existente com `templates/docker-compose.prod.yml` (BYO-proxy).
   O 1b já sinaliza quem detém as portas.
-- **Não sobrescreva `command:`** no serviço do fazer.ai agents: o CMD da imagem faz `bootstrap → migrate deploy →
+- **Não sobrescreva `command:`** no serviço do Indica Fácil Agents: o CMD da imagem faz `bootstrap → migrate deploy →
   serve`. Um `command:` próprio quebra o boot.
 - **agents → Chatwoot pela URL pública**: o `deployment_connect` funciona contra a URL **pública** do Chatwoot,
   sem gambiarra de rede interna (detalhe na gotcha de [`deploy-b-portainer.md`](deploy-b-portainer.md)).

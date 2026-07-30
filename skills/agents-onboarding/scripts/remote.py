@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Generic remote-bash runner for the fazer.ai agents onboarding. ONE job: run an arbitrary bash script on a
+# Generic remote-bash runner for the Indica Fácil Agents onboarding. ONE job: run an arbitrary bash script on a
 # host over SSH WITHOUT the agent hand-assembling it on the PowerShell command line. That assembly is the
 # footgun that reappears every new context on Windows, in two distinct shapes (both seen in real runs):
 #

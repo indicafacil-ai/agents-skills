@@ -1,4 +1,4 @@
-# 09: Plugar o Chatwoot no fazer.ai agents
+# 09: Plugar o Chatwoot no Indica Fácil Agents
 
 > **Ao pedir o OK do usuário** para aplicar (cada `dry_run:false` abaixo), descreva o efeito, não a tool: "vou conectar o seu Chatwoot ao agente e ligar o robô na caixa de entrada, pra ele começar a responder as conversas". **Não** cite `deployment_connect`/`inbox_bind`/`webhook`/"Agent Bot". Frases boas × ruins em `guardrails.md`.
 
@@ -35,11 +35,11 @@ Conecta as contas selecionadas (cria a instância + sincroniza os inboxes pra ag
 > **Pré: o inbox precisa existir no Chatwoot.** Se o usuário ainda não criou a caixa de entrada (WhatsApp, widget de site, etc.), entregue o **link direto da página de criação**, nunca "vá em Configurações → Caixas de entrada": `<base_url_do_chatwoot>/app/accounts/<accountId>/settings/inboxes/new` (conta 1 no install padrão). O deep-link abre direto o assistente de novo canal; o usuário cria o inbox e volta pro bind. O mesmo link também está na tela **Canais** do console (botão "Criar caixa de entrada no Chatwoot", por conta).
 
 ```jsonc
-inbox_bind { "inbox_id":"<id do inbox no fazer.ai agents>", "agent_id":"<id do agente>" }   // dry_run:false pra aplicar
+inbox_bind { "inbox_id":"<id do inbox no Indica Fácil Agents>", "agent_id":"<id do agente>" }   // dry_run:false pra aplicar
 ```
 
-O bind **provisiona/conecta o bot do agente no Chatwoot** (Agent Bot + webhook `/v1/chatwoot/webhook/:routeToken`); o `routeTokenHash`/`inboundSecretRef` ficam encriptados no fazer.ai agents e **nunca** saem no export. Não precisa setar `webhook_url` à mão. Verifique: bot-status do inbox = `active`.
+O bind **provisiona/conecta o bot do agente no Chatwoot** (Agent Bot + webhook `/v1/chatwoot/webhook/:routeToken`); o `routeTokenHash`/`inboundSecretRef` ficam encriptados no Indica Fácil Agents e **nunca** saem no export. Não precisa setar `webhook_url` à mão. Verifique: bot-status do inbox = `active`.
 
 ## Só MCP (nada de REST à mão)
 
-O fazer.ai agents expõe endpoints REST equivalentes por baixo (o que a tela `/channels` chama), mas **não os chame à mão**: as tools MCP `deployment_connect`/`inbox_bind` são o único caminho (regra MCP-only, ver `SKILL.md` e `06-setup-and-mcp.md`).
+O Indica Fácil Agents expõe endpoints REST equivalentes por baixo (o que a tela `/channels` chama), mas **não os chame à mão**: as tools MCP `deployment_connect`/`inbox_bind` são o único caminho (regra MCP-only, ver `SKILL.md` e `06-setup-and-mcp.md`).

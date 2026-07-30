@@ -12,12 +12,12 @@ O alvo **é** produção. A postura é o inverso do onboarding (onde nada toca p
 
 - Autorização a um **objetivo** ("conserta esse comportamento") não autoriza o **método** nem aplicar sozinho. Proponha o ajuste exato (qual campo, valor antigo → novo), mostre o diff, espere o aval.
 - Aprovação de uma mudança não se estende à próxima.
-- **Infra: reiniciar/redeployar/rebuildar serviços** (fazer.ai agents, Chatwoot, Langfuse, orquestrador), rodar **migrations**, ou mudar env/config viva. É mutação de produção, não diagnóstico: pode derrubar estado em voo (um restart do Coolify zera a fila de deploy) e um `migrate` pode ser destrutivo/irreversível. Proponha e espere o OK; nunca como atalho no meio de uma investigação.
+- **Infra: reiniciar/redeployar/rebuildar serviços** (Indica Fácil Agents, Chatwoot, Langfuse, orquestrador), rodar **migrations**, ou mudar env/config viva. É mutação de produção, não diagnóstico: pode derrubar estado em voo (um restart do Coolify zera a fila de deploy) e um `migrate` pode ser destrutivo/irreversível. Proponha e espere o OK; nunca como atalho no meio de uma investigação.
 
 ## Nunca
 
 - **Editar o DB de produção direto para mudar estado da app.** Use a UI/API/console da própria app: editor do agente, write tools de MCP. Write direto no DB fura o passo de publish/validação (o reader tipado normaliza e faz clamp; o audit registra; o runtime relê) e pode deixar o sistema OK agora e quebrado no próximo restart.
-- **Expor segredo** em log, output ou commit. Ao exibir, mascare. O fazer.ai agents retorna segredos só por referência (nome do vault), nunca o valor; respeite isso.
+- **Expor segredo** em log, output ou commit. Ao exibir, mascare. O Indica Fácil Agents retorna segredos só por referência (nome do vault), nunca o valor; respeite isso.
 
 ## Dry-run é o padrão das write tools de MCP
 

@@ -10,7 +10,7 @@ O `DATABASE_URL` é a role runtime (não-superuser) e o RLS está ativo. Um `SEL
 
 ### Transcrição de áudio vive só no Chatwoot, não no nosso DB
 
-A transcrição do STT é escrita de volta no **meta do attachment no Chatwoot** (`transcribed_text`), nunca espelhada no nosso DB (regra anti-PII: não espelhamos corpo de mensagem). Procurar o texto da transcrição no DB do fazer.ai agents não acha nada. Idem para o corpo das mensagens: a thread é lida ao vivo do Chatwoot, sem mirror.
+A transcrição do STT é escrita de volta no **meta do attachment no Chatwoot** (`transcribed_text`), nunca espelhada no nosso DB (regra anti-PII: não espelhamos corpo de mensagem). Procurar o texto da transcrição no DB do Indica Fácil Agents não acha nada. Idem para o corpo das mensagens: a thread é lida ao vivo do Chatwoot, sem mirror.
 
 ### O ExecutionLog não tem o texto da mensagem
 

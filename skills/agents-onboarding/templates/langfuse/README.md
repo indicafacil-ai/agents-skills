@@ -1,6 +1,6 @@
-# Langfuse (self-hosted) for fazer.ai
+# Langfuse (self-hosted) for Indica Fácil
 
-Optional companion service for **agent tracing**. Langfuse is wired into fazer.ai agents **per-tenant
+Optional companion service for **agent tracing**. Langfuse is wired into Indica Fácil Agents **per-tenant
 via a `langfuse` vault credential** (never a global env var); see `docs/deploy.md`
 and `docs/graph.md`. This folder vendors a deploy that actually works, in the
 project's three flavors (Coolify primary; Portainer and a generic "Outros" path, per
@@ -24,7 +24,7 @@ Result, observed in production-like testing:
   path the error is swallowed. Net effect: **traces silently never arrive**, with no client-side
   error and nothing in the producing app's logs.
 
-This is **not** a bug in fazer.ai agents (the trace handler builds, enqueues, and POSTs correctly) and
+This is **not** a bug in Indica Fácil Agents (the trace handler builds, enqueues, and POSTs correctly) and
 **not** a flush/runtime issue: it is a missing-storage deploy gap. These compose files bundle
 **MinIO** and wire all three S3 families (`EVENT_UPLOAD`, `MEDIA_UPLOAD`, `BATCH_EXPORT`) to it.
 
@@ -95,7 +95,7 @@ provisions everything on the first boot (Langfuse's own recommended headless-ini
 3. The operator **signs in** at `/auth/sign-in` (never signs up) with the seeded email + the generated
    password (the agent shows it) and changes it on first login. The seed is create-if-not-exists
    (verified: the password change survives redeploys), so the operator's real password never passes
-   through the agent. The agent already holds the keys and wires them into fazer.ai agents (below).
+   through the agent. The agent already holds the keys and wires them into Indica Fácil Agents (below).
 
 Empirically validated with this template's compose: the `LANGFUSE_INIT_USER` becomes org `OWNER`, the
 seeded user signs in (session shows `role: OWNER`), the seeded keys authenticate ingestion (`207`), and
@@ -121,7 +121,7 @@ curl -s -u "$PK:$SK" "$BASE/api/public/traces?limit=5"
 A `500` here means blob storage is still misconfigured: check the `langfuse` (web) container logs
 for `Failed to upload events to blob storage`.
 
-## Wire into fazer.ai agents
+## Wire into Indica Fácil Agents
 
 Tracing is per-tenant. The agent uses the MCP **`langfuse_connect`** tool: it takes the public key +
 secret key + base URL inline, creates the `langfuse` vault credential, and turns tracing on in one call

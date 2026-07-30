@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# Harbor (private registry) login on the VPS for the fazer.ai agents onboarding. Runs `docker login
-# --password-stdin` over SSH so the robot secret never lands in argv / ps / shell history, and the robot
-# username (which contains a "$", e.g. robot$project, a shell-expansion footgun, same family as the
-# Coolify token's "|") is decoded in-shell from base64 and passed quoted. The credential comes from the
-# hub MCP (create_registry_credential / generate_install_script); write the secret to a 0600 file and
-# pass --secret-file. Python 3 stdlib only. SSH runs via Bash with dangerouslyDisableSandbox:true.
+# Private-registry (GHCR) login on the VPS for the Indica Fácil Agents onboarding. Runs `docker login
+# --password-stdin` over SSH so the token never lands in argv / ps / shell history, and the username is
+# decoded in-shell from base64 and passed quoted, so a "$" or "|" in it can never be shell-expanded
+# (same footgun family as the Coolify token). The credential is your GitHub username plus a Personal
+# Access Token carrying the `read:packages` scope: write the token to a 0600 file and pass
+# --secret-file. Python 3 stdlib only. SSH runs via Bash with dangerouslyDisableSandbox:true.
 import argparse
 import base64
 import json
@@ -94,15 +94,19 @@ def cmd_login(args):
 
 def build_parser():
     parser = argparse.ArgumentParser(
-        prog="harbor-login.py",
-        description="docker login to a private registry on the VPS; secret via stdin, robot '$' protected.",
+        prog="registry-login.py",
+        description="docker login to a private registry on the VPS; secret via stdin, '$' in the username protected.",
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
     login = sub.add_parser("login", help="docker login over SSH (secret via --password-stdin)")
     login.add_argument("--ssh", required=True, metavar="USER@HOST")
-    login.add_argument("--username", required=True, help="robot account, e.g. 'robot$project+name'")
-    login.add_argument("--secret-file", required=True, help="file holding the robot secret (chmod 600)")
-    login.add_argument("--registry", default="harbor.fazer.ai")
+    login.add_argument("--username", required=True, help="registry username, e.g. your GitHub handle")
+    login.add_argument(
+        "--secret-file",
+        required=True,
+        help="file holding the token (chmod 600); for GHCR a PAT with read:packages",
+    )
+    login.add_argument("--registry", default="ghcr.io")
     login.add_argument("--ssh-opts", default="", help="extra ssh options, e.g. '-i ~/.ssh/key -p 2222'")
     login.add_argument("--timeout", type=int, default=60)
     login.set_defaults(fn=cmd_login)

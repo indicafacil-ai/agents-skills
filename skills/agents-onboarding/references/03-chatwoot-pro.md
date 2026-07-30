@@ -2,28 +2,28 @@
 
 ## Antes de tudo: `chatwootSource` (novo vs. existente/BYO)
 
-Leia `~/.fazer-ai/onboarding.json` → `chatwootSource`. Se **`existing`** (Chatwoot BYO), **PULE este doc inteiro**: não há Chatwoot a provisionar, `chatwoot.<seu-dominio>` é a instância que **já está no ar** (não a crie nem lhe mexa). Detecte Pro/OSS pela imagem (etapa 1b), vá direto ao **bind (etapa 9)** e trate a **etapa 9b (licenciar)** como opcional (só se for um Pro sem Kanban e o usuário quiser). Todo o resto abaixo é só pra **`new`**.
+Leia `~/.indica-facil/onboarding.json` → `chatwootSource`. Se **`existing`** (Chatwoot BYO), **PULE este doc inteiro**: não há Chatwoot a provisionar, `chatwoot.<seu-dominio>` é a instância que **já está no ar** (não a crie nem lhe mexa). Detecte Pro/OSS pela imagem (etapa 1b), vá direto ao **bind (etapa 9)** e trate a **etapa 9b (licenciar)** como opcional (só se for um Pro sem Kanban e o usuário quiser). Todo o resto abaixo é só pra **`new`**.
 
-> **Avise o usuário onde você está** (quando o Chatwoot é `new`): o Chatwoot é o **2º serviço** do deploy (a plataforma de atendimento onde as conversas acontecem; vem depois do painel, antes do fazer.ai agents e do Langfuse). Diga que vai subir o Chatwoot agora e que leva alguns minutos; dê sinal de vida durante a espera longa (imagem baixando) e confirme ao terminar, anunciando o próximo. Ver o princípio de narração em `SKILL.md`.
+> **Avise o usuário onde você está** (quando o Chatwoot é `new`): o Chatwoot é o **2º serviço** do deploy (a plataforma de atendimento onde as conversas acontecem; vem depois do painel, antes do Indica Fácil Agents e do Langfuse). Diga que vai subir o Chatwoot agora e que leva alguns minutos; dê sinal de vida durante a espera longa (imagem baixando) e confirme ao terminar, anunciando o próximo. Ver o princípio de narração em `SKILL.md`.
 
 ## Primeiro (source `new`): leia o marcador e ramifique (Pro vs OSS)
 
-Leia `~/.fazer-ai/onboarding.json` → `chatwootTier`. Eixo **independente** da edição do fazer.ai agents (`edition`, etapa 4). Marcador ausente → fallback pelo hub (`bunx @fazer-ai/agents hub licenses`): licença CHATWOOT disponível → Pro; senão OSS.
+Leia `~/.indica-facil/onboarding.json` → `chatwootTier`. Eixo **independente** da edição do Indica Fácil Agents (`edition`, etapa 4). Marcador ausente → **pergunte ao usuário** qual edição do Chatwoot ele quer (Pro, com Kanban, exige acesso à imagem privada; OSS é pública).
 
-- **`community` (OSS)** → imagem **pública** `ghcr.io/fazer-ai/chatwoot:latest` (nosso fork). O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/fazer-ai/baileys-api`, parte do fork — **não** remova). **NÃO** rode `docker login` nem provisione credencial do Harbor (não há licença e o pull do Chatwoot é público). Deploy pelo compose genérico (`templates/chatwoot/`, ver `templates/chatwoot/README.md`); no Coolify, setar `CHATWOOT_IMAGE=ghcr.io/fazer-ai/chatwoot:latest` no `templates/chatwoot/docker-compose.coolify.yml` (mantendo o `baileys-api`). **Pule a etapa 9b** (licenciar). O resto deste doc (Harbor + imagem privada) é **só Pro** — o que o Pro adiciona é o **Kanban** (imagem privada), não o Baileys.
-- **`pro`** → siga abaixo (Harbor + Coolify API + `docker login` + etapa 9b).
+- **`community` (OSS)** → imagem **pública** `ghcr.io/nicolasdasilvaesilva/chatwoot:latest` (nosso fork). O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/nicolasdasilvaesilva/baileys-api`, parte do fork — **não** remova). **NÃO** rode `docker login` nem provisione credencial de registry (o pull do Chatwoot OSS é público). Deploy pelo compose genérico (`templates/chatwoot/`, ver `templates/chatwoot/README.md`); no Coolify, setar `CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot:latest` no `templates/chatwoot/docker-compose.coolify.yml` (mantendo o `baileys-api`). **Pule a etapa 9b** (licenciar). O resto deste doc (imagem privada) é **só Pro** — o que o Pro adiciona é o **Kanban** (imagem privada), não o Baileys.
+- **`pro`** → siga abaixo (GHCR + Coolify API + `docker login` + etapa 9b).
 
-## Imagem privada (Harbor): credencial per-user via proxy do CLI
+## Imagem privada (GHCR): credencial de leitura
 
-Este é passo **seu** de execução, não uma pergunta: a edição (Pro/OSS) já foi decidida no início, então baixar a versão Pro é automático. **Se** você mencionar ao usuário o que está fazendo, diga em linguagem dele ("vou liberar o acesso à versão Pro pra baixar os programas no servidor; usa a sua assinatura, nenhuma senha passa por mim"), **nunca** "provisionar a registry credential per-user do Harbor" nem os comandos. Frases boas × ruins em `guardrails.md`.
+Este é passo **seu** de execução, não uma pergunta: a edição (Pro/OSS) já foi decidida no início, então baixar a versão Pro é automático. **Se** você mencionar ao usuário o que está fazendo, diga em linguagem dele ("vou liberar o acesso à versão Pro pra baixar os programas no servidor"), **nunca** "provisionar a registry credential" nem os comandos. Frases boas × ruins em `guardrails.md`.
 
-`harbor.fazer.ai/chatwoot/fazer-ai/chatwoot-pro:latest`.
-- Credencial do Harbor pelo **proxy do hub no CLI** (não há hub MCP na sessão do agente; o CLI tem o OAuth do bootstrap):
+`ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest`.
+- A imagem é privada no GHCR. A credencial é o **usuário do GitHub** + um **Personal Access Token** com o escopo **`read:packages`** — o MESMO par cobre Chatwoot Pro e Indica Fácil Agents Pro. Grave o token num arquivo `0600` e **nunca** o logue:
   ```sh
-  bunx @fazer-ai/agents hub registry-credential --apply --out harbor.secret
+  printf '%s' '<TOKEN>' > ghcr.secret && chmod 600 ghcr.secret
   ```
-  Robot **per-user** (a MESMA cred cobre Chatwoot Pro e fazer.ai agents Pro), idempotente; grava o secret em `harbor.secret` (`0600`) e imprime só o `username`; o secret **nunca** sai no output. **Nunca** logar o secret.
-- O compose é o vendorado `templates/chatwoot/docker-compose.coolify.yml` (não precisa extrair do hub).
+  Use um token só de **leitura**; um token com escopo de escrita não tem o que fazer num servidor de deploy.
+- O compose é o vendorado `templates/chatwoot/docker-compose.coolify.yml`.
 
 ## Deploy via API do Coolify
 
@@ -34,9 +34,9 @@ python3 scripts/coolify.py create-service --base-url http://<VPS_IP>:8000 --toke
   --compose-file templates/chatwoot/docker-compose.coolify.yml   # → {uuid}
 python3 scripts/coolify.py api-post --base-url http://<VPS_IP>:8000 --token-file coolify.token --path /services/<uuid>/start
 ```
-- Logue no Harbor com `scripts/harbor-login.py login` **antes** do `start` (o pull da privada precisa do login): roda `docker login --password-stdin` por SSH (secret fora do argv) e protege o `$` do usuário robot. O `username` vem do `hub registry-credential` (acima); o secret está em `harbor.secret` (`0600`):
+- Logue no registry com `scripts/registry-login.py login` **antes** do `start` (o pull da privada precisa do login): roda `docker login --password-stdin` por SSH, então o token fica fora do argv. O `username` é o seu handle do GitHub; o token está em `ghcr.secret` (`0600`):
 ```sh
-python3 scripts/harbor-login.py login --ssh root@<VPS_IP> --username '<robot-user>' --secret-file harbor.secret
+python3 scripts/registry-login.py login --ssh root@<VPS_IP> --username '<seu-usuario-github>' --secret-file ghcr.secret
 ```
 
 ## Admin + token (Rails runner via SSH)

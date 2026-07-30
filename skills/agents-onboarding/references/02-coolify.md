@@ -1,6 +1,6 @@
 # 02: Coolify (reusar/instalar, API, Instance Domain)
 
-> **Avise o usuário onde você está:** o Coolify é o **1º serviço** do deploy (o painel que gerencia tudo; depois vêm Chatwoot, fazer.ai agents e Langfuse). Diga que vai começar por ele, e a instalação leva alguns minutos. Dê sinal de vida durante a espera longa (Docker + imagens baixando) em vez de sumir; ao terminar, confirme e anuncie o próximo. Ver o princípio de narração (e a contagem que se ajusta ao caso real) em `SKILL.md`.
+> **Avise o usuário onde você está:** o Coolify é o **1º serviço** do deploy (o painel que gerencia tudo; depois vêm Chatwoot, Indica Fácil Agents e Langfuse). Diga que vai começar por ele, e a instalação leva alguns minutos. Dê sinal de vida durante a espera longa (Docker + imagens baixando) em vez de sumir; ao terminar, confirme e anuncie o próximo. Ver o princípio de narração (e a contagem que se ajusta ao caso real) em `SKILL.md`.
 
 ## Brownfield: reusar se já existe e está saudável
 
@@ -101,17 +101,17 @@ docker exec -i coolify-db psql -U coolify -d coolify
 
 ## Projeto + ambiente
 
-Crie (ou reaproveite) um projeto com o **nome padrão `fazer.ai agents`** (não perguntado; o operador renomeia depois no console se quiser) e o ambiente `production`. Os UUIDs (server/projeto/env/serviços) são **gerados a cada instalação**: descubra-os pela API/DB; nunca chumbe UUIDs de outra instalação.
+Crie (ou reaproveite) um projeto com o **nome padrão `Indica Fácil Agents`** (não perguntado; o operador renomeia depois no console se quiser) e o ambiente `production`. Os UUIDs (server/projeto/env/serviços) são **gerados a cada instalação**: descubra-os pela API/DB; nunca chumbe UUIDs de outra instalação.
 
-## Registry privado do Harbor (só Pro)
+## Registry privado (só Pro)
 
-Imagens **Pro** (Chatwoot `chatwoot-pro`; fazer.ai agents no projeto `agents`) são privadas no Harbor: o Coolify precisa da credencial registrada **antes** de puxar, senão o deploy falha (pull denied / 401). Só no caminho Pro:
+As imagens **Pro** (`ghcr.io/nicolasdasilvaesilva/chatwoot-pro`, `.../agents-pro`) são privadas no GHCR: o Coolify precisa da credencial registrada **antes** de puxar, senão o deploy falha (pull denied / 401). Só no caminho Pro:
 
-1. Provisione a credencial **per-user** pelo **proxy do hub no CLI** (não há hub MCP na sessão; o CLI tem o OAuth do bootstrap):
+1. Gere um **Personal Access Token** do GitHub com o escopo **`read:packages`** (clássico, ou fine-grained com permissão de leitura em packages) e grave-o num arquivo `0600`:
    ```sh
-   bunx @fazer-ai/agents hub registry-credential --apply --out harbor.secret
+   printf '%s' '<TOKEN>' > ghcr.secret && chmod 600 ghcr.secret
    ```
-   Grava o secret em `harbor.secret` (`0600`) e imprime só `username` + caminho (o secret **nunca** sai no output). Idempotente (garante o robot per-user, sem rotação).
-2. Registre no Coolify (Servers → Registries, ou via API) apontando pra `harbor.fazer.ai` com o `username` (do passo 1) e o secret de `harbor.secret`. **Nunca** logue o secret.
+   Um PAT de leitura basta — **nunca** use um token com escopo de escrita aqui, e **nunca** logue o valor.
+2. Registre no Coolify (Servers → Registries, ou via API) apontando pra `ghcr.io`, com o seu **usuário do GitHub** e o token de `ghcr.secret`.
 
-No caminho **OSS** (imagem pública), pule isto inteiro.
+No caminho **OSS** (imagem pública), pule isto inteiro — `ghcr.io/nicolasdasilvaesilva/chatwoot` e `.../agents` são públicas e não pedem login.

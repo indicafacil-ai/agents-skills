@@ -6,4 +6,4 @@
 4. **Respeite a marcação Free/Full** (`references/02-free-full-and-invariants.md`) em tudo que adicionar; confira o `.env.example` ao adicionar env var.
 5. **Valide:** `bun check` verde antes de concluir.
 
-Estilo: sem em-dash; `fazer.ai` sempre minúsculo; PT-BR com acentuação onde houver texto pt-BR.
+Estilo: sem em-dash; a marca `Indica Fácil` com acento; PT-BR com acentuação onde houver texto pt-BR.

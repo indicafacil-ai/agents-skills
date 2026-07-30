@@ -23,7 +23,7 @@ Padrão oficial de headless-init do Langfuse, **validado empiricamente** (stack 
    No boot o Langfuse cria o **usuário (OWNER da org) + org + projeto + keys**. O USER exige a ORG (por isso vão juntos); upsert **por id**, então re-deploy não duplica.
 3. **Handoff explícito, com pausa (headless não é silencioso).** O Langfuse é semeado sem o usuário ver nada acontecer, então **anuncie** que o painel está no ar e **entregue o login**: a URL em **`/auth/sign-in`** (login, **não** signup), o **e-mail derivado** (o do admin do Chatwoot, etapa 3) e a **senha temporária gerada** (mostre a senha, é o único jeito de ele entrar), e peça pra **trocar no 1º acesso** pela UI. **Espere um "consegui entrar" antes de seguir** a run (não avance enquanto ele não confirmar o acesso). O seed é **create-if-not-exists** (validado: a troca de senha do operador **sobrevive** a redeploys, o `LANGFUSE_INIT_USER_PASSWORD` fica inerte), então a senha definitiva é a dele e nunca passou por você. Ele nunca abre "Settings → API Keys" nem copia key nenhuma.
 
-Como **você gerou** as keys no passo 1, elas já estão na sua mão pra ligar no fazer.ai agents (abaixo). Um deploy, sem redeploy, sem ler `org_id` no Postgres, e o signup **nunca** ficou aberto.
+Como **você gerou** as keys no passo 1, elas já estão na sua mão pra ligar no Indica Fácil Agents (abaixo). Um deploy, sem redeploy, sem ler `org_id` no Postgres, e o signup **nunca** ficou aberto.
 
 ## FQDN (preserve a porta)
 
@@ -38,7 +38,7 @@ python3 scripts/langfuse-verify.py ingestion --base-url https://langfuse.<seu-do
 ```
 Status 500 = quase sempre MinIO/S3 ausente.
 
-## Ligue no fazer.ai agents (por MCP, `langfuse_connect`)
+## Ligue no Indica Fácil Agents (por MCP, `langfuse_connect`)
 
 O wiring é **por MCP**, num tool só: `langfuse_connect` recebe `public_key`/`secret_key`/`base_url` **inline** (as keys que você semeou), cria a credencial no vault **já preenchida** (`kind:"langfuse"`, `{publicKey, secretKey}` + `baseUrl`) e liga o tracing no tenant-settings. É dry-run por padrão: revise o preview (keys redigidas) e reenvie com `dry_run:false` pra aplicar. Mesmo padrão do `deployment_connect` do Chatwoot (segredo de infra inline). Como as keys já existem, a credencial nasce **preenchida** (NÃO `pending`): uma entry pending não resolve o segredo e o tenant-settings rejeita com `credential ref not found`. (No vault o campo é `baseUrl` camelCase, ver `gotchas.md`; doc do tool em `docs/mcp.md`.)
 
@@ -55,13 +55,13 @@ printf '<NOVA_SENHA>' > /tmp/lfpw && chmod 600 /tmp/lfpw   # a senha fora do arg
 
 # 1) DRY-RUN (não escreve): confirma users.password + gera o hash no container agents + mostra o SQL
 python3 scripts/langfuse-set-password.py \
-  --ssh root@<VPS_IP> --ssh-opts "-i ~/.ssh/fazer-ai-agents -o IdentitiesOnly=yes" \
+  --ssh root@<VPS_IP> --ssh-opts "-i ~/.ssh/indica-facil-agents -o IdentitiesOnly=yes" \
   --agents-container <agents> --langfuse-pg <postgres-langfuse> \
   --email <email> --password-file /tmp/lfpw
 
 # 2) APLICA (mutação): idem + escreve o UPDATE e confirma `UPDATE 1`
 python3 scripts/langfuse-set-password.py \
-  --ssh root@<VPS_IP> --ssh-opts "-i ~/.ssh/fazer-ai-agents -o IdentitiesOnly=yes" \
+  --ssh root@<VPS_IP> --ssh-opts "-i ~/.ssh/indica-facil-agents -o IdentitiesOnly=yes" \
   --agents-container <agents> --langfuse-pg <postgres-langfuse> \
   --email <email> --password-file /tmp/lfpw --apply
 rm -f /tmp/lfpw
@@ -69,4 +69,4 @@ rm -f /tmp/lfpw
 
 O e-mail é o do operador (o mesmo do Chatwoot/seed). Depois do `--apply`, ele loga em **`/auth/sign-in`** com a nova senha.
 
-> Isto **muta o banco do Langfuse** (não é o Postgres do fazer.ai agents): o script é dry-run por padrão de propósito — peça o **OK explícito** do operador antes do `--apply` e só rode quando ele pediu o reset. **Por baixo** ele confirma o schema (`\d users` tem `password : text` — validado ao vivo, Langfuse v3 + agents-pro), gera o hash com o Bun do `agents` (**não** no container do Langfuse: o `bcryptjs` dele mora num caminho pnpm interno que `require` não resolve de `/app`) e aplica via heredoc de delimitador aspado (o `$` do hash não sofre expansão). Fallback manual, se precisar sem o script: `docker exec -e NP='<senha>' <agents> bun -e 'process.stdout.write(await Bun.password.hash(process.env.NP,{algorithm:"bcrypt",cost:12}))'` pro hash, e `remote.py --in-container <postgres-langfuse> --exec 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' --script-file lf.sql` pro `UPDATE`.
+> Isto **muta o banco do Langfuse** (não é o Postgres do Indica Fácil Agents): o script é dry-run por padrão de propósito — peça o **OK explícito** do operador antes do `--apply` e só rode quando ele pediu o reset. **Por baixo** ele confirma o schema (`\d users` tem `password : text` — validado ao vivo, Langfuse v3 + agents-pro), gera o hash com o Bun do `agents` (**não** no container do Langfuse: o `bcryptjs` dele mora num caminho pnpm interno que `require` não resolve de `/app`) e aplica via heredoc de delimitador aspado (o `$` do hash não sofre expansão). Fallback manual, se precisar sem o script: `docker exec -e NP='<senha>' <agents> bun -e 'process.stdout.write(await Bun.password.hash(process.env.NP,{algorithm:"bcrypt",cost:12}))'` pro hash, e `remote.py --in-container <postgres-langfuse> --exec 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' --script-file lf.sql` pro `UPDATE`.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Portainer brownfield discovery (read-only): inventory the existing Portainer + its containers,
 # fingerprint each by image, and decide per-service (reuse healthy / install missing / flag incompatible)
-# for the fazer.ai agents onboarding. Mirror of the Coolify brownfield-probe.sh, but Portainer-API-native.
+# for the Indica Fácil Agents onboarding. Mirror of the Coolify brownfield-probe.sh, but Portainer-API-native.
 # Env: PORTAINER_API_KEY, PORTAINER_ENDPOINT_ID, optional PORTAINER_URL (default https://localhost:9443).
 import json, ssl, os, urllib.request
 
@@ -93,7 +93,7 @@ def decide(service):
 
 
 print("\n=== Per-service decision for the agents onboarding ===")
-# Chatwoot has TWO valid variants: chatwoot-pro (Harbor image, hub subscription) and chatwoot OSS
+# Chatwoot has TWO valid variants: chatwoot-pro (private GHCR image) and chatwoot OSS
 # (public image). Both satisfy the agents integration (Agent Bot API). Pro adds Kanban (private image);
 # Baileys (baileys-api) ships in our fork on BOTH editions, but a brownfield "oss" hit may be upstream
 # Chatwoot (any non-pro image), so Baileys is only assured on our fork.
@@ -107,10 +107,10 @@ def decide_chatwoot():
         return "PRESENT(oss)+healthy -> REUSE (OSS; no Kanban; Baileys if it's our fork)"
     if inv.get("chatwoot-pro") or inv.get("chatwoot-oss"):
         return "PRESENT+unhealthy -> flag/investigate"
-    return "ABSENT -> install (pro if hub subscription, else oss)"
+    return "ABSENT -> install (pro if the private image is reachable, else oss)"
 TARGETS = [
     ("agents", decide("agents"), "required (the app)"),
-    ("chatwoot", decide_chatwoot(), "required (integration); pro=Harbor/hub-sub, oss=public"),
+    ("chatwoot", decide_chatwoot(), "required (integration); pro=private GHCR, oss=public"),
     ("langfuse", decide("langfuse"), "optional (tracing)"),
 ]
 for name, dec, note in TARGETS:

@@ -18,7 +18,7 @@ O padrão de qualquer painel PaaS (Easypanel/Dokploy/CapRover/…) é o mesmo:
   rotear + certificar. Um Caddy nosso brigaria pelas portas.
 - O env vem do **`.env` que você controla** (não há magic vars do Coolify): gere com o
   `scripts/gen-onboarding-env.ts` e cole as vars no serviço pelo painel.
-- Cada stack (fazer.ai agents, Chatwoot, Langfuse) vira um projeto Compose; anexe `agents.`/`chatwoot.`/`langfuse.` a
+- Cada stack (Indica Fácil Agents, Chatwoot, Langfuse) vira um projeto Compose; anexe `agents.`/`chatwoot.`/`langfuse.` a
   cada um. Detalhes de UI/API variam por produto e versão: resolva com seu conhecimento do painel da run.
 
 Daqui em diante os passos são os mesmos da VM crua; só muda o "como" você aplica o compose + env.
@@ -45,7 +45,7 @@ Daqui em diante os passos são os mesmos da VM crua; só muda o "como" você apl
    docker compose -f templates/chatwoot/docker-compose.yml up -d  # Pro vs OSS pelo env (03-chatwoot-pro.md)
    docker compose -f templates/langfuse/docker-compose.yml up -d  # com MinIO (obrigatório)
    ```
-4. **Boot do fazer.ai agents:** o CMD da imagem faz `bootstrap → migrate → serve`; **não** sobrescreva `command:`.
+4. **Boot do Indica Fácil Agents:** o CMD da imagem faz `bootstrap → migrate → serve`; **não** sobrescreva `command:`.
 5. **O `/setup` da agents não pede token** (o compose do onboarding sobe com `SETUP_TOKEN_REQUIRED=false`):
    entregue `https://agents.<domínio>/setup` ao usuário, sem garimpar token de log. Rede de segurança:
    `docker compose exec agents bun set-admin <email> <senha>` cria um SUPER_ADMIN direto (ver

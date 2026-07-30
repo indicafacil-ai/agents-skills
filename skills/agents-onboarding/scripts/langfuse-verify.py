@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Langfuse ingestion smoke test for the fazer.ai agents onboarding. POSTs a tiny batch to
+# Langfuse ingestion smoke test for the Indica Fácil Agents onboarding. POSTs a tiny batch to
 # /api/public/ingestion with HTTP Basic auth and asserts 207/200, NOT 500. This is the load-bearing
 # check: a naive "test connection" hits /api/public/projects, which reads only Postgres and returns 200
 # even when blob storage (MinIO/S3) is missing, masking a broken ingestion that silently drops every

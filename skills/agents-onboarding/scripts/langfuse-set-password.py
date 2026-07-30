@@ -9,7 +9,7 @@
 # This orchestrates the three remote steps over ONE SSH connection, feeding every payload through stdin so
 # nothing is hand-assembled on a command line (the footgun remote.py exists to kill: eaten quotes / BOM):
 #   1. confirm the schema read-only (`\d users` must have a `password` column),
-#   2. bcrypt the new password with the *agents* container's Bun, the fazer.ai agents runtime, always in
+#   2. bcrypt the new password with the *agents* container's Bun, the Indica Fácil Agents runtime, always in
 #      the stack. Do NOT hash inside the Langfuse container: its bcryptjs lives on an internal pnpm path that
 #      `require("bcryptjs")` from /app cannot resolve.
 #   3. dry-run by DEFAULT (prints the UPDATE, touches nothing); with --apply, write it to the Langfuse
@@ -20,7 +20,7 @@
 # --password-file or an interactive prompt (never a positional arg, never an env var).
 #
 # Find the container names with `docker ps` (under Coolify they carry a stack suffix): the *agents* one runs
-# harbor…/agents-pro (Bun); the Langfuse Postgres is the `postgres` of the LANGFUSE stack, NOT the agents
+# ghcr.io/nicolasdasilvaesilva/agents-pro (Bun); the Langfuse Postgres is the `postgres` of the LANGFUSE stack, NOT the agents
 # Postgres, NOT coolify-db. Confuse them and you write into the wrong database.
 #
 # Python 3 stdlib only (no pip). Runs ssh via Bash with dangerouslyDisableSandbox:true (it is network),

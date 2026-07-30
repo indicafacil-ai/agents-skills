@@ -1,19 +1,19 @@
-# Chatwoot for fazer.ai: GENERIC flavor (Portainer / EasyPanel / Dokploy / plain Docker).
+# Chatwoot for Indica Fácil: GENERIC flavor (Portainer / EasyPanel / Dokploy / plain Docker).
 #
 # ONE file, BOTH editions, selected by env (see ./README.md):
-#   - OSS (no hub subscription): defaults, our public `ghcr.io/fazer-ai/chatwoot` fork, WITH the
-#     Baileys WhatsApp provider (public `baileys-api` image, so OSS needs no Harbor login).
-#   - Pro (hub subscription): set CHATWOOT_IMAGE to the Harbor image (adds Kanban + other Pro
-#     features). Requires `docker login harbor.fazer.ai` with the license registry credential
-#     (hub: generate_install_script). Baileys ships in BOTH editions.
+#   - OSS (no private image): defaults, our public `ghcr.io/nicolasdasilvaesilva/chatwoot` fork, WITH the
+#     Baileys WhatsApp provider (public `baileys-api` image, so OSS needs no registry login).
+#   - Pro (private image): set CHATWOOT_IMAGE to the private GHCR image (adds Kanban + other Pro
+#     features). Requires `docker login ghcr.io` with the license registry credential
+#     (a GitHub PAT with read:packages). Baileys ships in BOTH editions.
 #
 # Secrets come from a .env you fill in (see ./.env.example); Coolify generates those automatically,
 # so it has its own file (./docker-compose.coolify.yml). TLS + reverse proxy are EXTERNAL: this stack
 # only publishes Chatwoot's HTTP port on the host (default 127.0.0.1:3001); terminate TLS in front
-# (the fazer.ai agents bundled Caddy can front chatwoot.<domain> at it; see the agents-onboarding skill).
+# (the Indica Fácil Agents bundled Caddy can front chatwoot.<domain> at it; see the agents-onboarding skill).
 #
 #   cp .env.example .env   # fill every CHANGE_ME, then:
-#   docker compose up -d   # OSS (Baileys included). For Pro: docker login harbor.fazer.ai, then set
+#   docker compose up -d   # OSS (Baileys included). For Pro: docker login ghcr.io, then set
 #                          # CHATWOOT_IMAGE to the chatwoot-pro image and run docker compose up -d.
 
 x-chatwoot-env: &chatwoot-env
@@ -40,8 +40,8 @@ x-chatwoot-env: &chatwoot-env
 
 services:
   chatwoot:
-    # OSS default (our fork); for Pro set CHATWOOT_IMAGE=harbor.fazer.ai/chatwoot/fazer-ai/chatwoot-pro:latest
-    image: '${CHATWOOT_IMAGE:-ghcr.io/fazer-ai/chatwoot:latest}'
+    # OSS default (our fork); for Pro set CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest
+    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -65,7 +65,7 @@ services:
       retries: 10
 
   sidekiq:
-    image: '${CHATWOOT_IMAGE:-ghcr.io/fazer-ai/chatwoot:latest}'
+    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -111,9 +111,9 @@ services:
       timeout: 20s
       retries: 10
 
-  # The Baileys WhatsApp provider (BOTH editions). Public image, so OSS needs no Harbor login.
+  # The Baileys WhatsApp provider (BOTH editions). Public image, so OSS needs no registry login.
   baileys-api:
-    image: '${BAILEYS_IMAGE:-ghcr.io/fazer-ai/baileys-api:latest}'
+    image: '${BAILEYS_IMAGE:-ghcr.io/nicolasdasilvaesilva/baileys-api:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
