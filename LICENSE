@@ -1,6 +1,11 @@
 MIT License
 
+Copyright (c) 2026 Nicolas da Silva e Silva (Indica Fácil)
 Copyright (c) 2025-2026 FAZER.AI LTDA
+
+This is a derivative work of fazer-ai/agents-skills
+(https://github.com/fazer-ai/agents-skills). The original copyright notice is
+retained above, as required by this license.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
