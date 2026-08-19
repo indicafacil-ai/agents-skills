@@ -4,7 +4,7 @@
 
 - **Hostinger** (3 servers via npx, stdio, `HOSTINGER_API_TOKEN`): `hostinger-dns`, `hostinger-vps`, `hostinger-domains`. DNS é o uso central (etapa 1: A-records); VPS/domains pra descoberta/gestão. **Só quando a infra é Hostinger**: em outro provider não há esses MCPs (ver "Outro provider" na `01-vps-dns-ssh.md`). Chame as tools pelo **nome completo** `mcp__hostinger-{dns,vps,domains}__<Tool>` (ex.: `mcp__hostinger-vps__VPS_getVirtualMachinesV1`); o nome cru (`VPS_...`, `domains_...`) devolve *No such tool available*.
 - **Não existe hub central.** Nada de OAuth de licença nem proxy de credencial: o registry é o GHCR (credencial = usuário do GitHub + PAT com `read:packages`, ver `03-chatwoot-pro.md`) e o licenciamento do Kanban é resolvido no próprio Chatwoot. Se uma referência antiga mandar você chamar `hub <op>`, ela está obsoleta.
-- **agents** (OAuth): conectado SÓ na etapa 6, depois do `/setup` (antes disso a instância nem existe).
+- **agente** (OAuth): conectado **SÓ na etapa 6**, depois do `/setup` (antes disso a instância nem existe). **Não trate a ausência dessas tools como estado inconsistente nem motivo pra parar**: até a etapa 6 ela é o estado esperado da jornada; o gate "sem tools → PARE" de `06-setup-and-mcp.md` só vale **depois** da conexão.
 - Depois de adicionar os MCPs, **reinicie a sessão do harness** pra eles ficarem disponíveis na execução.
 
 ## Estado do CLI de onboarding (em disco, `~/.indica-facil/`)
