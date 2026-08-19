@@ -5,7 +5,7 @@ Exemplos de agentes no schema de export **`indica-facil.agent` v1** (o mesmo for
 
 | Arquivo | Persona |
 | --- | --- |
-| `esther-clinica-indicafacil.json` | "Esther", recepção de uma clínica fictícia (Clínica IndicaFácil): agendamento, FAQ, voz, KB. |
+| `esther-clinica-indicafacil.json` | "Esther", recepção de uma clínica fictícia (Clínica IndicaFácil.AI): agendamento, FAQ, voz, KB. |
 
 ## Credenciais são por NOME, não por valor
 

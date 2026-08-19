@@ -4,7 +4,7 @@
 
 ## 1. Importar (`agent_import`, mcp:write)
 
-A skill traz o **agente padrão** vendorado em `samples/agents/esther-clinica-indicafacil.json` ("Esther", recepção da Clínica IndicaFácil fictícia: agendamento, FAQ via KB, voz, Asaas). **Importe-o por padrão**; só use outro export se o usuário trouxer o dele. Leia o arquivo e passe o conteúdo como `export`:
+A skill traz o **agente padrão** vendorado em `samples/agents/esther-clinica-indicafacil.json` ("Esther", recepção da Clínica IndicaFácil.AI fictícia: agendamento, FAQ via KB, voz, Asaas). **Importe-o por padrão**; só use outro export se o usuário trouxer o dele. Leia o arquivo e passe o conteúdo como `export`:
 
 ```jsonc
 agent_import { "export": <conteúdo de samples/agents/esther-clinica-indicafacil.json>, "tenant": "<slug do tenant_list>" }   // dry_run:true → preview, depois dry_run:false
@@ -15,7 +15,7 @@ agent_import { "export": <conteúdo de samples/agents/esther-clinica-indicafacil
 - Credenciais faltantes (os nomes não existem no tenant novo): o import cria uma entrada **pending** (mantendo o ref wired) e emite o aviso `credentialPending`; o usuário preenche no vault.
 - **Exceções** que não viram pending no import → `credentialNotFound`: (a) OAuth gerenciado (`google_oauth`, `mcp_oauth`), que nunca pode ser pending (vem de connect flow); (b) kinds que exigem `base_url`/`param_name`, porque o import não tem esses valores pra passar. Pra (b), crie explicitamente com `credential_create` passando `base_url`/`param_name` (ex.: `openai_compatible`); pra (a), trate o OAuth à parte.
 
-> **Negócio real (não o demo):** se o usuário quer o agente pro negócio **dele** (não a Clínica IndicaFácil de exemplo), **adapte o prompt da Esther preservando a estrutura base** e trocando só o conteúdo:
+> **Negócio real (não o demo):** se o usuário quer o agente pro negócio **dele** (não a Clínica IndicaFácil.AI de exemplo), **adapte o prompt da Esther preservando a estrutura base** e trocando só o conteúdo:
 > - **Preserve** as seções (identidade, tom, regras de atendimento, uso das ferramentas, políticas), a ordem e o formato do prompt original; troque o **conteúdo**, não a arquitetura. A estrutura invariante do runtime (grounding da KB, variáveis `{{...}}`, contexto MCP) é anexada sozinha, não vive no texto.
 > - **Troque** só o específico do negócio: nome, serviços, horários, endereço, políticas, exemplos. Mantenha as instruções de ferramentas coerentes com as tools que o agente **realmente** tem.
 > - **Pergunte** as infos necessárias pela ferramenta de pergunta estruturada, **uma de cada vez** (nome, o que oferece, horários, políticas de agendamento/cancelamento, pagamento); nunca invente nem deixe placeholders (`[preencher]`).
