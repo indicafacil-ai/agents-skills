@@ -13,7 +13,7 @@ São skills **executadas pelo agente**. Funcionam em **Claude Code**, **Codex** 
 Para onboarding, normalmente você **não** roda os comandos à mão: o instalador detecta o seu agente de IA e faz tudo (MCPs, skill e handoff):
 
 ```sh
-curl -fsSL https://agents.indicafacil.app/install.sh | bash
+curl -fsSL https://agents.indicafacil.ai/install.sh | bash
 ```
 
 Para instalar manualmente:
