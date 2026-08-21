@@ -33,7 +33,7 @@ python3 scripts/remote.py --ssh root@<VPS_IP> --ssh-opts "-i <chave>" --script-f
 | **Coolify** | `coollabsio/coolify` (+ `coolify-db`/`-redis`/`-realtime`, `-proxy`=`traefik`) | container `coolify` + API `:8000`=200 | tag da imagem (ex. `:4.1.2`) |
 | **Chatwoot** | imagem com `chatwoot` (+ `sidekiq`, e `baileys-api` para WhatsApp) | `chatwoot` + `sidekiq` Up | tag (`:latest` → ver via `/version`) |
 | **Langfuse** | `langfuse/langfuse` (+ `-worker`, `clickhouse`, **`minio`**) | web+worker+clickhouse+minio Up | tag (ex. `:3`) |
-| **Indica Fácil Agents** | `ghcr.io/nicolasdasilvaesilva/agents` (+ `pgvector`) | container Up + `/api/health` | tag |
+| **Indica Fácil Agents** | `ghcr.io/indicafacil-ai/agents` (+ `pgvector`) | container Up + `/api/health` | tag |
 
 As portas das apps **não** ficam expostas no host (atrás do Traefik); só Coolify (`:8000`) e o proxy (`:80`/`:443`) escutam. `curl localhost:80` sem o Host certo dá 404/503 (esperado). Pra health de uma app, use o FQDN dela.
 
@@ -48,7 +48,7 @@ Greenfield = tudo ausente = instala tudo. O resultado é um inventário por serv
 
 ## 4. Compatibilidade (o que torna "presente" em "incompatível")
 
-- **Chatwoot OSS vs Pro:** a imagem revela. `ghcr.io/nicolasdasilvaesilva/chatwoot-pro` = **Pro** (Kanban + features Pro). `ghcr.io/nicolasdasilvaesilva/chatwoot` (nosso fork OSS), ou o `chatwoot/chatwoot` oficial do Docker Hub num brownfield de terceiro, = **OSS**: o core do agente funciona (Agent Bot é padrão), mas **sem** Kanban/features Pro. Se o usuário quer essas features, sinalize a migração pra Pro.
+- **Chatwoot OSS vs Pro:** a imagem revela. `ghcr.io/indicafacil-ai/chatwoot-pro` = **Pro** (Kanban + features Pro). `ghcr.io/nicolasdasilvaesilva/chatwoot` (nosso fork OSS), ou o `chatwoot/chatwoot` oficial do Docker Hub num brownfield de terceiro, = **OSS**: o core do agente funciona (Agent Bot é padrão), mas **sem** Kanban/features Pro. Se o usuário quer essas features, sinalize a migração pra Pro.
 - **Langfuse v3 vs v2:** o Indica Fácil Agents fala com a v3 (arquitetura `clickhouse` + **`minio` obrigatório**, ver `references/05-langfuse.md`). Tag `:2`, ou ausência de `clickhouse`/`minio`, → incompatível/parcial: sinalize.
 - **Coolify:** validado em `4.x`. Versões muito antigas têm API diferente; confirme `:8000/api/health`=200 e cheque a versão pela tag.
 - **Postgres reusado (fora do Coolify, Tier B/C):** o Indica Fácil Agents exige **pgvector** (extensão `vector`) e um **superuser** pro bootstrap das 2 roles (ver `references/04-agents-image.md`). Um Postgres compartilhado sem pgvector ou sem acesso superuser → sinalize.

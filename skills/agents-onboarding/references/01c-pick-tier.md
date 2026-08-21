@@ -46,7 +46,7 @@ Entregou os 5 → vá direto pra **etapa 6** (a mesma pra todos os tiers).
 
 ## Invariantes (valem em todos os tiers)
 
-- **`ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest`**, nunca Postgres puro: o schema roda `CREATE EXTENSION vector`.
+- **`ghcr.io/indicafacil-ai/postgres-17-pgvector:latest`**, nunca Postgres puro: o schema roda `CREATE EXTENSION vector`.
 - **Réplica única** do Indica Fácil Agents: os workers (scheduler/debounce/outbound) assumem um único líder; não escale o
   serviço `agents` pra >1 (ver o aviso no `templates/docker-compose.prod.yml`).
 - **DNS antes do ACME**: o cert só emite com o A-record já resolvendo pro IP da VPS. Crie os A-records

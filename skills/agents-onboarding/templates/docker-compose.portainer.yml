@@ -68,7 +68,7 @@ services:
     # Edition-driven: Free (default, public image) vs Pro (set AGENTS_IMAGE to the private
     # private GHCR image, after `docker login` — GitHub username + PAT with read:packages).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: ${AGENTS_IMAGE:-ghcr.io/nicolasdasilvaesilva/agents:latest}
+    image: ${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/agents:latest}
     pull_policy: always
     restart: always
     # NOTE: no `command` here on purpose — the image entrypoint runs, in order: db-bootstrap.ts (idempotent
@@ -118,7 +118,7 @@ services:
   postgres:
     # pgvector image (NOT plain postgres): the schema needs CREATE EXTENSION vector. pg17 matches the
     # validated isolation spike. Not published to the host — only the app reaches it over the network.
-    image: 'ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest'
+    image: 'ghcr.io/indicafacil-ai/postgres-17-pgvector:latest'
     restart: always
     environment:
       - POSTGRES_DB=${DATABASE_NAME:-indicafacil_agents_db}

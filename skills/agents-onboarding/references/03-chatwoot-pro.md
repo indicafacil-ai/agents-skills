@@ -10,14 +10,14 @@ Leia `~/.indica-facil/onboarding.json` → `chatwootSource`. Se **`existing`** (
 
 Leia `~/.indica-facil/onboarding.json` → `chatwootTier`. Eixo **independente** da edição do Indica Fácil Agents (`edition`, etapa 4). Marcador ausente → **pergunte ao usuário** qual edição do Chatwoot ele quer (Pro, com Kanban, exige acesso à imagem privada; OSS é pública).
 
-- **`community` (OSS)** → imagem **pública** `ghcr.io/nicolasdasilvaesilva/chatwoot:latest` (nosso fork). O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/nicolasdasilvaesilva/baileys-api`, parte do fork — **não** remova). **NÃO** rode `docker login` nem provisione credencial de registry (o pull do Chatwoot OSS é público). Deploy pelo compose genérico (`templates/chatwoot/`, ver `templates/chatwoot/README.md`); no Coolify, setar `CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot:latest` no `templates/chatwoot/docker-compose.coolify.yml` (mantendo o `baileys-api`). **Pule a etapa 9b** (licenciar). O resto deste doc (imagem privada) é **só Pro** — o que o Pro adiciona é o **Kanban** (imagem privada), não o Baileys.
+- **`community` (OSS)** → imagem **pública** `ghcr.io/nicolasdasilvaesilva/chatwoot:latest` (nosso fork). O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/indicafacil-ai/baileys-api`, parte do fork — **não** remova). **NÃO** rode `docker login` nem provisione credencial de registry (o pull do Chatwoot OSS é público). Deploy pelo compose genérico (`templates/chatwoot/`, ver `templates/chatwoot/README.md`); no Coolify, setar `CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot:latest` no `templates/chatwoot/docker-compose.coolify.yml` (mantendo o `baileys-api`). **Pule a etapa 9b** (licenciar). O resto deste doc (imagem privada) é **só Pro** — o que o Pro adiciona é o **Kanban** (imagem privada), não o Baileys.
 - **`pro`** → siga abaixo (GHCR + Coolify API + `docker login` + etapa 9b).
 
 ## Imagem privada (GHCR): credencial de leitura
 
 Este é passo **seu** de execução, não uma pergunta: a edição (Pro/OSS) já foi decidida no início, então baixar a versão Pro é automático. **Se** você mencionar ao usuário o que está fazendo, diga em linguagem dele ("vou liberar o acesso à versão Pro pra baixar os programas no servidor"), **nunca** "provisionar a registry credential" nem os comandos. Frases boas × ruins em `guardrails.md`.
 
-`ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest`.
+`ghcr.io/indicafacil-ai/chatwoot-pro:latest`.
 - A imagem é privada no GHCR. A credencial é o **usuário do GitHub** + um **Personal Access Token** com o escopo **`read:packages`** — o MESMO par cobre Chatwoot Pro e Indica Fácil Agents Pro. Grave o token num arquivo `0600` e **nunca** o logue:
   ```sh
   printf '%s' '<TOKEN>' > ghcr.secret && chmod 600 ghcr.secret

@@ -6,9 +6,9 @@ Bifurca por edição. Pergunte ao desenvolvedor qual ele tem acesso, ou deduza: 
 
 Clone direto, sem credencial:
 ```sh
-git clone https://github.com/nicolasdasilvaesilva/agents.git indica-facil-agents
+git clone https://github.com/indicafacil-ai/agents.git indica-facil-agents
 ```
-(O repo Free é `nicolasdasilvaesilva/agents`.)
+(O repo Free é `indicafacil-ai/agents`.)
 
 ## Pro (repo privado no GitHub)
 

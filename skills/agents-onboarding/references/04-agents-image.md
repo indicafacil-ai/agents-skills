@@ -6,7 +6,7 @@
 
 Leia `~/.indica-facil/onboarding.json` → `edition` (`free` | `pro`; ausente = `free`). É a escolha **explícita** do CLI; respeite-a. Eixo **independente** do `chatwootTier` (etapa 3).
 
-- **`free`** → imagem **pública** `ghcr.io/nicolasdasilvaesilva/agents:latest` (default do compose, multi-arch amd64/arm64). **Sem** `docker login`, não seta `AGENTS_IMAGE`.
+- **`free`** → imagem **pública** `ghcr.io/indicafacil-ai/agents:latest` (default do compose, multi-arch amd64/arm64). **Sem** `docker login`, não seta `AGENTS_IMAGE`.
 - **`pro`** → imagem **privada** no GHCR: `ghcr.io/nicolasdasilvaesilva/agents-pro:latest`. A credencial é o seu usuário do GitHub + um **PAT** com o escopo `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Logue com `scripts/registry-login.py login` (token via `--secret-file ghcr.secret`, fora do argv) e sete `AGENTS_IMAGE` pra esse path. **Nunca** logar o token.
   - **Reuso:** se o Chatwoot também for Pro (etapa 3), é o **mesmo** `docker login`, não logar duas vezes.
   - **Tier A (Coolify):** setar a env `AGENTS_IMAGE` no serviço + registrar a registry credential no Coolify (igual ao Chatwoot Pro).
@@ -14,7 +14,7 @@ Leia `~/.indica-facil/onboarding.json` → `edition` (`free` | `pro`; ausente = 
 
 ## Compose
 
-Use o `templates/docker-compose.coolify.yml` do repo via `scripts/coolify.py create-service` (lê o compose, base64-encoda, POSTa em `/api/v1/services`). Topologia: `agents` (imagem conforme a **edição** acima; o compose default é a Free) + `postgres` (`ghcr.io/nicolasdasilvaesilva/postgres-17-pgvector:latest`: NÃO postgres puro: o schema precisa de `CREATE EXTENSION vector`). Volume `storage:/app/storage`. Healthcheck `wget -qO- http://localhost:3000/api/health`.
+Use o `templates/docker-compose.coolify.yml` do repo via `scripts/coolify.py create-service` (lê o compose, base64-encoda, POSTa em `/api/v1/services`). Topologia: `agents` (imagem conforme a **edição** acima; o compose default é a Free) + `postgres` (`ghcr.io/indicafacil-ai/postgres-17-pgvector:latest`: NÃO postgres puro: o schema precisa de `CREATE EXTENSION vector`). Volume `storage:/app/storage`. Healthcheck `wget -qO- http://localhost:3000/api/health`.
 
 ## Magic vars (Coolify gera; NÃO setar à mão)
 

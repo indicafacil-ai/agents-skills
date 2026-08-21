@@ -5,7 +5,7 @@ The inbox Indica Fácil Agents plugs into. The onboarding installs Chatwoot as p
 
 | Edition | Image | When | Extra features |
 | --- | --- | --- | --- |
-| **Pro** | `ghcr.io/nicolasdasilvaesilva/chatwoot-pro` (private GHCR) | operator **can pull the private image** | Kanban (+ other Pro-image features) |
+| **Pro** | `ghcr.io/indicafacil-ai/chatwoot-pro` (private GHCR) | operator **can pull the private image** | Kanban (+ other Pro-image features) |
 | **OSS** | `ghcr.io/nicolasdasilvaesilva/chatwoot` (our public fork) | **no** private image | standard Chatwoot + Baileys WhatsApp provider |
 
 **Both editions work with Indica Fácil Agents**: the integration is the standard Chatwoot Agent Bot + API
@@ -41,7 +41,7 @@ docker compose up -d
 
 # Pro (private image): authenticate to the registry first, then set the Pro image.
 docker login ghcr.io          # your GitHub username + a PAT with read:packages
-CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest \
+CHATWOOT_IMAGE=ghcr.io/indicafacil-ai/chatwoot-pro:latest \
 docker compose up -d
 ```
 

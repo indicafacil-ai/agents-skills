@@ -3,7 +3,7 @@
 Habilita as features **Pro** (Kanban) numa instância Chatwoot **Pro já deployada**. Duas coisas são
 necessárias e **distintas**:
 
-- A **imagem Pro** (`ghcr.io/nicolasdasilvaesilva/chatwoot-pro`) traz o **código** do Kanban. (O Baileys
+- A **imagem Pro** (`ghcr.io/indicafacil-ai/chatwoot-pro`) traz o **código** do Kanban. (O Baileys
   já vem no fork OSS público, então não é o que distingue o Pro.) Sem a imagem Pro, não há Kanban. A
   edição é escolhida no deploy (ver [`03-chatwoot-pro.md`](03-chatwoot-pro.md)).
 - A **feature ligada na conta**, no super admin: imagem Pro com a feature desligada = Kanban invisível.
@@ -69,7 +69,7 @@ não puxa a imagem, logo não tem o código do Kanban. A feature é ligada manua
 - **Kanban não aparece com a imagem Pro:** faltou o passo 1 (ligar a feature na conta). A imagem traz o
   código; o flag por-conta é separado.
 - **`kanban_feature_not_available`:** a imagem no ar não é a Pro. Confira com a etapa 1b —
-  `ghcr.io/nicolasdasilvaesilva/chatwoot-pro` = Pro; `.../chatwoot` = OSS.
+  `ghcr.io/indicafacil-ai/chatwoot-pro` = Pro; `.../chatwoot` = OSS.
 - **`FRONTEND_URL` vazio:** não afeta o Kanban em si, mas quebra outros caminhos do Chatwoot que montam
   URL absoluta. Sete de todo modo.
 

@@ -23,12 +23,12 @@ Para instalar manualmente:
 Instalam o plugin inteiro (as 3 skills ficam disponíveis, invocáveis por `/agents-…`):
 
 ```sh
-claude plugin marketplace add nicolasdasilvaesilva/agents-skills
+claude plugin marketplace add indicafacil-ai/agents-skills
 claude plugin install agents@agents
 ```
 
 ```sh
-codex plugin marketplace add nicolasdasilvaesilva/agents-skills
+codex plugin marketplace add indicafacil-ai/agents-skills
 codex plugin add agents@agents
 ```
 
@@ -37,10 +37,10 @@ codex plugin add agents@agents
 Instala **por skill** (escolha as que quiser) a partir do mesmo tap:
 
 ```sh
-hermes skills tap add nicolasdasilvaesilva/agents-skills
-hermes skills install nicolasdasilvaesilva/agents-skills/agents-onboarding --yes --force
-hermes skills install nicolasdasilvaesilva/agents-skills/agents-dev --yes --force
-hermes skills install nicolasdasilvaesilva/agents-skills/agents-operation --yes --force
+hermes skills tap add indicafacil-ai/agents-skills
+hermes skills install indicafacil-ai/agents-skills/agents-onboarding --yes --force
+hermes skills install indicafacil-ai/agents-skills/agents-dev --yes --force
+hermes skills install indicafacil-ai/agents-skills/agents-operation --yes --force
 ```
 
 > O `--force` do Hermes passa o verdict `caution` do scanner de skills: as skills fazem operações de DevOps legítimas (SSH, `sudo`, leitura de env vars) que o scanner sinaliza. É esperado.

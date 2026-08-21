@@ -40,7 +40,7 @@ x-chatwoot-env: &chatwoot-env
 
 services:
   chatwoot:
-    # OSS default (our fork); for Pro set CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot-pro:latest
+    # OSS default (our fork); for Pro set CHATWOOT_IMAGE=ghcr.io/indicafacil-ai/chatwoot-pro:latest
     image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot:latest}'
     pull_policy: always
     volumes:
@@ -113,7 +113,7 @@ services:
 
   # The Baileys WhatsApp provider (BOTH editions). Public image, so OSS needs no registry login.
   baileys-api:
-    image: '${BAILEYS_IMAGE:-ghcr.io/nicolasdasilvaesilva/baileys-api:latest}'
+    image: '${BAILEYS_IMAGE:-ghcr.io/indicafacil-ai/baileys-api:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'

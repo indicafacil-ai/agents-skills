@@ -29,7 +29,7 @@ Caddyfile a partir do env no boot (`CADDY_DOMAIN` → o app; `PORTAINER_DOMAIN` 
 - **DNS**: A-records pro FQDN do app (ex. `agents.<domínio>`) e, se quiser o painel num domínio limpo,
   `portainer.<domínio>` → o IP do VPS. O ACME valida contra eles, então têm que resolver **antes** do deploy.
 - **Credenciais de registry** pras imagens privadas (configure uma vez no Portainer, passe `Registries:[id]`).
-  Só a privada precisa: `ghcr.io/nicolasdasilvaesilva/agents` (Free), `pgvector` e `baileys-api` são **públicas**, puxam sem login.
+  Só a privada precisa: `ghcr.io/indicafacil-ai/agents` (Free), `pgvector` e `baileys-api` são **públicas**, puxam sem login.
   - `ghcr.io` pro Chatwoot **Pro** (e Indica Fácil Agents Pro): usuário do GitHub + um **PAT** com o escopo
     `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Chatwoot OSS não precisa de registry privado.
 
