@@ -1,6 +1,6 @@
 # Chatwoot for Indica Fácil: COOLIFY flavor (magic vars; Coolify auto-generates the SERVICE_* secrets).
 # Edition by CHATWOOT_IMAGE: default = Pro (private GHCR image); for OSS set
-# CHATWOOT_IMAGE=ghcr.io/nicolasdasilvaesilva/chatwoot:latest (our public fork). Baileys (baileys-api) runs in
+# CHATWOOT_IMAGE=ghcr.io/indicafacil-ai/chatwoot:latest (our public fork). Baileys (baileys-api) runs in
 # BOTH editions — its image is public, so OSS keeps it.
 # Pro pull needs the registry credential configured in Coolify (GitHub username + PAT with read:packages); OSS needs none.
 # Set the service Domain in Coolify to your Chatwoot FQDN (fills SERVICE_URL_CHATWOOT).

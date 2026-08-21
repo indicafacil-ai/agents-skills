@@ -6,7 +6,7 @@ The inbox Indica Fácil Agents plugs into. The onboarding installs Chatwoot as p
 | Edition | Image | When | Extra features |
 | --- | --- | --- | --- |
 | **Pro** | `ghcr.io/indicafacil-ai/chatwoot-pro` (private GHCR) | operator **can pull the private image** | Kanban (+ other Pro-image features) |
-| **OSS** | `ghcr.io/nicolasdasilvaesilva/chatwoot` (our public fork) | **no** private image | standard Chatwoot + Baileys WhatsApp provider |
+| **OSS** | `ghcr.io/indicafacil-ai/chatwoot` (our public fork) | **no** private image | standard Chatwoot + Baileys WhatsApp provider |
 
 **Both editions work with Indica Fácil Agents**: the integration is the standard Chatwoot Agent Bot + API
 (see `docs/chatwoot.md`). OSS is **not** a downgrade of compatibility, only of

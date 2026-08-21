@@ -114,4 +114,4 @@ As imagens **Pro** (`ghcr.io/indicafacil-ai/chatwoot-pro`, `.../agents-pro`) sã
    Um PAT de leitura basta — **nunca** use um token com escopo de escrita aqui, e **nunca** logue o valor.
 2. Registre no Coolify (Servers → Registries, ou via API) apontando pra `ghcr.io`, com o seu **usuário do GitHub** e o token de `ghcr.secret`.
 
-No caminho **OSS** (imagem pública), pule isto inteiro — `ghcr.io/nicolasdasilvaesilva/chatwoot` e `.../agents` são públicas e não pedem login.
+No caminho **OSS** (imagem pública), pule isto inteiro — `ghcr.io/indicafacil-ai/chatwoot` e `.../agents` são públicas e não pedem login.

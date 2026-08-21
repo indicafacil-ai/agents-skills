@@ -20,7 +20,7 @@
 # --password-file or an interactive prompt (never a positional arg, never an env var).
 #
 # Find the container names with `docker ps` (under Coolify they carry a stack suffix): the *agents* one runs
-# ghcr.io/nicolasdasilvaesilva/agents-pro (Bun); the Langfuse Postgres is the `postgres` of the LANGFUSE stack, NOT the agents
+# ghcr.io/indicafacil-ai/agents-pro (Bun); the Langfuse Postgres is the `postgres` of the LANGFUSE stack, NOT the agents
 # Postgres, NOT coolify-db. Confuse them and you write into the wrong database.
 #
 # Python 3 stdlib only (no pip). Runs ssh via Bash with dangerouslyDisableSandbox:true (it is network),

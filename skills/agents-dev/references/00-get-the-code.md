@@ -12,12 +12,12 @@ git clone https://github.com/indicafacil-ai/agents.git indica-facil-agents
 
 ## Pro (repo privado no GitHub)
 
-O código Pro/Full (`nicolasdasilvaesilva/agents-pro`) é privado. O acesso é por **convite no GitHub** — não há proxy nem credencial intermediária.
+O código Pro/Full (`indicafacil-ai/agents-pro`) é privado. O acesso é por **convite no GitHub** — não há proxy nem credencial intermediária.
 
 1. Peça acesso ao repositório. Autentique com o `gh` CLI (`gh auth login`) ou com um PAT de leitura.
 2. Clone:
 ```sh
-git clone https://github.com/nicolasdasilvaesilva/agents-pro.git indica-facil-agents-pro
+git clone https://github.com/indicafacil-ai/agents-pro.git indica-facil-agents-pro
 ```
 3. **Nunca** logar o token nem commitá-lo. Se usar PAT na URL do remote, ele fica em texto plano no
    `.git/config` do clone — prefira o `gh` CLI ou um credential helper.

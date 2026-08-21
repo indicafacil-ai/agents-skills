@@ -1,7 +1,7 @@
 # Chatwoot for Indica Fácil: GENERIC flavor (Portainer / EasyPanel / Dokploy / plain Docker).
 #
 # ONE file, BOTH editions, selected by env (see ./README.md):
-#   - OSS (no private image): defaults, our public `ghcr.io/nicolasdasilvaesilva/chatwoot` fork, WITH the
+#   - OSS (no private image): defaults, our public `ghcr.io/indicafacil-ai/chatwoot` fork, WITH the
 #     Baileys WhatsApp provider (public `baileys-api` image, so OSS needs no registry login).
 #   - Pro (private image): set CHATWOOT_IMAGE to the private GHCR image (adds Kanban + other Pro
 #     features). Requires `docker login ghcr.io` with the license registry credential
@@ -41,7 +41,7 @@ x-chatwoot-env: &chatwoot-env
 services:
   chatwoot:
     # OSS default (our fork); for Pro set CHATWOOT_IMAGE=ghcr.io/indicafacil-ai/chatwoot-pro:latest
-    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot:latest}'
+    image: '${CHATWOOT_IMAGE:-ghcr.io/indicafacil-ai/chatwoot:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
@@ -65,7 +65,7 @@ services:
       retries: 10
 
   sidekiq:
-    image: '${CHATWOOT_IMAGE:-ghcr.io/nicolasdasilvaesilva/chatwoot:latest}'
+    image: '${CHATWOOT_IMAGE:-ghcr.io/indicafacil-ai/chatwoot:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'

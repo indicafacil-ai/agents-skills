@@ -99,7 +99,7 @@ A edição **Pro** do Indica Fácil Agents (`edition: "pro"`, marcador) usa imag
 
 ### Chatwoot OSS não faz `docker login` (mas inclui Baileys)
 
-`chatwootTier: "community"` (OSS) usa a imagem pública `ghcr.io/nicolasdasilvaesilva/chatwoot` (nosso fork), **sem** `docker login` no GHCR. O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/indicafacil-ai/baileys-api`, parte do fork — **não** remova). Só o `pro` faz `docker login` no GHCR + imagem privada `chatwoot-pro` (o que o Pro adiciona é o **Kanban**, não o Baileys). **Não** rode `docker login` nem provisione credencial de registry no caminho OSS (o pull público não precisa dela).
+`chatwootTier: "community"` (OSS) usa a imagem pública `ghcr.io/indicafacil-ai/chatwoot` (nosso fork), **sem** `docker login` no GHCR. O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/indicafacil-ai/baileys-api`, parte do fork — **não** remova). Só o `pro` faz `docker login` no GHCR + imagem privada `chatwoot-pro` (o que o Pro adiciona é o **Kanban**, não o Baileys). **Não** rode `docker login` nem provisione credencial de registry no caminho OSS (o pull público não precisa dela).
 
 ## Langfuse
 

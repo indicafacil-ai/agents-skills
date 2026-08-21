@@ -9,7 +9,7 @@ Leva um desenvolvedor de "quero mexer no código" até "implementou com as boas 
 
 ## ⚠️ Distribuição: o Pro é privado
 
-- O **repositório Pro/Full** (`nicolasdasilvaesilva/agents-pro`) e a **imagem Pro** são **privados**. **Nunca** publique o código, a imagem, ou trechos exclusivos do Full em local público (gist, fork público, registry público, post, screenshot).
+- O **repositório Pro/Full** (`indicafacil-ai/agents-pro`) e a **imagem Pro** são **privados**. **Nunca** publique o código, a imagem, ou trechos exclusivos do Full em local público (gist, fork público, registry público, post, screenshot).
 - O acesso ao Pro é concedido individualmente. Vazar repo/imagem quebra esse modelo.
 - **Sugestões e contribuições vão para o repositório Free** (open-source): `indicafacil-ai/agents`. Abra issues/PRs lá.
 

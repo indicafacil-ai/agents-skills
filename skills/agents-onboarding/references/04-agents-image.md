@@ -7,7 +7,7 @@
 Leia `~/.indica-facil/onboarding.json` → `edition` (`free` | `pro`; ausente = `free`). É a escolha **explícita** do CLI; respeite-a. Eixo **independente** do `chatwootTier` (etapa 3).
 
 - **`free`** → imagem **pública** `ghcr.io/indicafacil-ai/agents:latest` (default do compose, multi-arch amd64/arm64). **Sem** `docker login`, não seta `AGENTS_IMAGE`.
-- **`pro`** → imagem **privada** no GHCR: `ghcr.io/nicolasdasilvaesilva/agents-pro:latest`. A credencial é o seu usuário do GitHub + um **PAT** com o escopo `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Logue com `scripts/registry-login.py login` (token via `--secret-file ghcr.secret`, fora do argv) e sete `AGENTS_IMAGE` pra esse path. **Nunca** logar o token.
+- **`pro`** → imagem **privada** no GHCR: `ghcr.io/indicafacil-ai/agents-pro:latest`. A credencial é o seu usuário do GitHub + um **PAT** com o escopo `read:packages`, gravado num arquivo `0600` (`ghcr.secret`). Logue com `scripts/registry-login.py login` (token via `--secret-file ghcr.secret`, fora do argv) e sete `AGENTS_IMAGE` pra esse path. **Nunca** logar o token.
   - **Reuso:** se o Chatwoot também for Pro (etapa 3), é o **mesmo** `docker login`, não logar duas vezes.
   - **Tier A (Coolify):** setar a env `AGENTS_IMAGE` no serviço + registrar a registry credential no Coolify (igual ao Chatwoot Pro).
   - **Tier B/C (compose):** `export AGENTS_IMAGE=<imagem>` (ou no `.env`) antes do `docker compose up`.
