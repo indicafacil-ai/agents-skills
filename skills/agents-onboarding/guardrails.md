@@ -32,7 +32,7 @@ Cada ponto de aprovação, com uma frase **ruim** (jargão) e uma **boa** (clara
   - Boa: "Vou conectar o seu Chatwoot ao agente e ligar o robô na caixa de entrada, pra ele começar a responder as conversas. Posso aplicar?"
 - **Importar o agente:**
   - Ruim: "Vou chamar o `agent_import` no tenant `<slug>` com o export vendorado."
-  - Boa: "Vou criar o agente de atendimento (a Maria, uma recepcionista de exemplo) na sua conta. Ele nasce desligado e em modo de teste, então não fala com cliente nenhum até você liberar. Posso criar?"
+  - Boa: "Vou criar o agente de atendimento (a Esther, uma recepcionista de exemplo) na sua conta. Ele nasce desligado e em modo de teste, então não fala com cliente nenhum até você liberar. Posso criar?"
 - **Ligar o Langfuse (traços/monitoramento):**
   - Ruim: "Rodo o `langfuse_connect` inline com as keys que semeei e ligo o tracing no tenant-settings."
   - Boa: "Vou ligar o painel que registra as conversas do agente (pra você acompanhar e depurar depois). Posso seguir?"

@@ -9,7 +9,7 @@
 
 ## Estado do CLI de onboarding (em disco, `~/.indica-facil/`)
 
-O CLI `@indica-facil/agents` roda ANTES do handoff e deixa marcadores que você deve **ler em vez de re-perguntar**:
+O CLI `@indicafacil/agents` roda ANTES do handoff e deixa marcadores que você deve **ler em vez de re-perguntar**:
 
 - **`onboarding.json`**: `{ chatwootSource: "new" | "existing", chatwootTier?: "pro" | "community", edition: "free" | "pro" }`. **Eixos independentes:** a **origem** do Chatwoot (`chatwootSource`: `new` = subir um novo, aí `chatwootTier` diz a edição; `existing` = plugar num Chatwoot que **já existe** / BYO, **sem** tier), a edição do **Chatwoot** quando é novo (`chatwootTier`, etapa 3 / `chatwoot-kanban-enable.md` / `templates/chatwoot/README.md`) e a edição da **Indica Fácil Agents** (`edition`, etapa 4 / `04-agents-image.md`: `pro` = imagem privada no GHCR; `free` = pública). É a escolha **explícita** do operador; respeite-a (inclusive `existing` = não provisionar Chatwoot; `community`/`free` = seguir sem Pro, mesmo que haja acesso à imagem privada).
 - **`hostinger.json`**: `{ token }` da API Hostinger (quando o provider é Hostinger); o CLI também já o injeta nos MCPs.
