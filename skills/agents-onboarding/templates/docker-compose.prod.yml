@@ -17,7 +17,7 @@
 services:
   agents:
     # Edition-driven: Free (default, public image) vs Pro (set AGENTS_IMAGE to the private
-    # private GHCR image, after `docker login` — GitHub username + PAT with read:packages).
+    # Harbor image, project `agents`, after `docker login` — hub: create_registry_credential, per-user).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
     image: ${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/agents:latest}
     pull_policy: always
@@ -33,6 +33,35 @@ services:
       # NOTE: default to the public URL, NOT `*` — the WS realtime origin check does an exact
       # match, so `*` matches no real Origin and 403s every WebSocket upgrade.
       - CORS_ORIGIN=${CORS_ORIGIN:-${PUBLIC_URL}}
+      # Rate-limit keying. OFF here, unlike the bundled-proxy files, because the app port above is
+      # published on every interface by default: anyone who can reach it directly could otherwise
+      # send an X-Forwarded-For of their choosing and give themselves a private bucket. Before setting
+      # this to `true`, narrow the binding (APP_PORT=127.0.0.1:3000) or firewall the port, AND check
+      # that your proxy overwrites or appends to X-Forwarded-For instead of passing the client's value
+      # through (nginx `$proxy_add_x_forwarded_for`, not `$http_x_forwarded_for`) — otherwise the last
+      # entry is still the client's. Leave the hops at 1 unless the proxy nearest to this app is
+      # configured to forward the chain it received; see .env.example.
+      # NOTE: the outgoing runtime role during a DATABASE_URL rotation, declared for the length of
+      # the overlap. Bootstrap reconciles fleet-role membership down to this database's runtime role
+      # and the administrator, so without this the outgoing role loses its cross-tenant path mid-
+      # drain and every asSuperAdmin call in the container still serving on it — API-key
+      # verification included — starts reading zero rows. Not inferred from an open session: a
+      # stale installation whose database was recreated under the same name presents exactly the
+      # same session (measured). Comma-separated; clear it once the old container is gone.
+      - FLEET_ROLE_RETAIN_MEMBER=${FLEET_ROLE_RETAIN_MEMBER:-}
+      - TRUST_PROXY=${TRUST_PROXY:-false}
+      - TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}
+      # NOTE: rate-limit ceilings, per client address. The first two are runaway guards, generous on
+      # purpose. The credential pair is the tight one: it covers login, signup, the one-time /setup
+      # token and accept-invite, and its window is minutes rather than one minute because a
+      # per-minute ceiling resets 60 times an hour. Raise RATE_LIMIT_CREDENTIAL_MAX if a shared
+      # office address trips it; the bucket is keyed by IP, so everyone behind one NAT shares it.
+      # Boot refuses a credential budget that collides with another limiter's budget+window, or that
+      # is not tighter than RATE_LIMIT_USER_PER_MIN. See .env.example.
+      - RATE_LIMIT_USER_PER_MIN=${RATE_LIMIT_USER_PER_MIN:-600}
+      - RATE_LIMIT_MCP_PER_MIN=${RATE_LIMIT_MCP_PER_MIN:-1200}
+      - RATE_LIMIT_CREDENTIAL_MAX=${RATE_LIMIT_CREDENTIAL_MAX:-20}
+      - RATE_LIMIT_CREDENTIAL_WINDOW_MINUTES=${RATE_LIMIT_CREDENTIAL_WINDOW_MINUTES:-5}
       # First-run: disable the /setup token in this trusted, TLS-fronted onboarding window (the
       # advisory lock still caps /setup at one admin). Set to `true` to require it.
       - SETUP_TOKEN_REQUIRED=${SETUP_TOKEN_REQUIRED:-false}
@@ -50,10 +79,15 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       # Checkpointer pool — MUST be the runtime (non-superuser) role, never the migration URL.
       - LANGGRAPH_DATABASE_URL=${LANGGRAPH_DATABASE_URL}
-      # Persist uploaded branding (logo/favicon) + generated quote PDFs on the `storage` volume
+      # Persist uploaded branding (logo/favicon) + issued document PDFs on the `storage` volume
       # (mounted below). The defaults (./data/*) live on the ephemeral container FS and vanish on
       # every redeploy.
       - BRANDING_STORAGE_DIR=/app/storage/branding
+      - DOCUMENTS_STORAGE_DIR=/app/storage/documents
+      # NOTE: kept for installations created before the rename. Platforms that FREEZE a compose
+      # value at install time (Coolify) never deliver the new name to an existing install, so
+      # dropping this line would send its PDFs to the container filesystem, where a redeploy
+      # erases them without a word. config.ts reads DOCUMENTS_STORAGE_DIR first, then this.
       - QUOTES_STORAGE_DIR=/app/storage/quotes
     ports:
       # Host:container. Put a TLS-terminating reverse proxy in front; in untrusted networks bind to

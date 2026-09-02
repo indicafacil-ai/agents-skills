@@ -1,8 +1,8 @@
 services:
   agents:
     # Edition-driven: Free (default, public image) vs Pro — for Pro, set the AGENTS_IMAGE env on
-    # the Coolify service to the private GHCR image (project `agents`) AND register the
-    # registry credential in Coolify (GitHub username + PAT with read:packages, same as Chatwoot Pro).
+    # the Coolify service to the private Harbor image (project `agents`) AND register the Harbor
+    # registry credential in Coolify (hub: create_registry_credential, per-user, same as Chatwoot Pro).
     # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
     image: '${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/agents:latest}'
     pull_policy: always
@@ -13,12 +13,39 @@ services:
       - NODE_ENV=production
       - PORT=${PORT:-3000}
       - PUBLIC_URL=${SERVICE_URL_AGENTS}
+      # NOTE: the outgoing runtime role during a DATABASE_URL rotation, declared for the length of
+      # the overlap. Bootstrap reconciles fleet-role membership down to this database's runtime role
+      # and the administrator, so without this the outgoing role loses its cross-tenant path mid-
+      # drain and every asSuperAdmin call in the container still serving on it — API-key
+      # verification included — starts reading zero rows. Not inferred from an open session: a
+      # stale installation whose database was recreated under the same name presents exactly the
+      # same session (measured). Comma-separated; clear it once the old container is gone.
+      - FLEET_ROLE_RETAIN_MEMBER=${FLEET_ROLE_RETAIN_MEMBER:-}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - JWT_SECRET=${SERVICE_PASSWORD_64_JWTSECRET}
       - ENCRYPTION_KEY=${SERVICE_PASSWORD_64_ENCRYPTIONKEY}
       # NOTE: default to the public URL, NOT `*` — the WS realtime origin check does an exact
       # match, so `*` matches no real Origin and 403s every WebSocket upgrade.
       - CORS_ORIGIN=${CORS_ORIGIN:-${SERVICE_URL_AGENTS}}
+      # Rate-limit keying. Safe to trust here: this service publishes no port, so every request
+      # arrives through Coolify's proxy and X-Forwarded-For is written by it. Without this the whole
+      # deployment shares one bucket. Leave the hops at 1: a proxy that does not trust its upstream
+      # emits only its own peer, so behind a CDN a higher count finds a chain shorter than itself and
+      # falls back to the proxy socket, collapsing everyone into one bucket. Configure the platform
+      # proxy to trust the CDN before raising it.
+      - TRUST_PROXY=true
+      - TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}
+      # NOTE: rate-limit ceilings, per client address. The first two are runaway guards, generous on
+      # purpose. The credential pair is the tight one: it covers login, signup, the one-time /setup
+      # token and accept-invite, and its window is minutes rather than one minute because a
+      # per-minute ceiling resets 60 times an hour. Raise RATE_LIMIT_CREDENTIAL_MAX if a shared
+      # office address trips it; the bucket is keyed by IP, so everyone behind one NAT shares it.
+      # Boot refuses a credential budget that collides with another limiter's budget+window, or that
+      # is not tighter than RATE_LIMIT_USER_PER_MIN. See .env.example.
+      - RATE_LIMIT_USER_PER_MIN=${RATE_LIMIT_USER_PER_MIN:-600}
+      - RATE_LIMIT_MCP_PER_MIN=${RATE_LIMIT_MCP_PER_MIN:-1200}
+      - RATE_LIMIT_CREDENTIAL_MAX=${RATE_LIMIT_CREDENTIAL_MAX:-20}
+      - RATE_LIMIT_CREDENTIAL_WINDOW_MINUTES=${RATE_LIMIT_CREDENTIAL_WINDOW_MINUTES:-5}
       # First-run: disable the /setup token in this trusted, TLS-fronted onboarding window (the
       # advisory lock still caps /setup at one admin). Set to `true` to require it.
       - SETUP_TOKEN_REQUIRED=${SETUP_TOKEN_REQUIRED:-false}
@@ -28,9 +55,14 @@ services:
       # `registration_endpoint`. Also the app default — pinned here so the stack works on an older
       # image too, since without it both clients abort before any login screen (docs/mcp.md).
       - MCP_DCR_ENABLED=${MCP_DCR_ENABLED:-true}
-      # Persist uploaded branding (logo/favicon) + generated quote PDFs on the `storage` volume.
+      # Persist uploaded branding (logo/favicon) + issued document PDFs on the `storage` volume.
       # The defaults (./data/*) live on the ephemeral container FS and vanish on every redeploy.
       - BRANDING_STORAGE_DIR=/app/storage/branding
+      - DOCUMENTS_STORAGE_DIR=/app/storage/documents
+      # NOTE: kept for installations created before the rename. Platforms that FREEZE a compose
+      # value at install time (Coolify) never deliver the new name to an existing install, so
+      # dropping this line would send its PDFs to the container filesystem, where a redeploy
+      # erases them without a word. config.ts reads DOCUMENTS_STORAGE_DIR first, then this.
       - QUOTES_STORAGE_DIR=/app/storage/quotes
       # NOTE: TWO roles by design. The superuser (SERVICE_USER_DBUSER, also the postgres
       # container's owner) runs migrations + bootstrap. The app role (SERVICE_USER_APPDBUSER,
