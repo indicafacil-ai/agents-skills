@@ -6,6 +6,7 @@ Exemplos de agentes no schema de export **`indica-facil.agent` v1** (o mesmo for
 | Arquivo | Persona |
 | --- | --- |
 | `esther-clinica-indicafacil.json` | "Esther", recepção de uma clínica fictícia (Clínica IndicaFácil.AI): agendamento, FAQ, voz, KB. |
+| `rui-transportadora-http.json` | "Rui", atendimento de uma transportadora fictícia. **O menor bundle com ferramenta HTTP declarativa**: `urlTemplate`, `allowedHosts`, contrato de entrada, `expectedStatuses` e template de resposta. É a forma que uma migração de n8n produz para o nó que faz **uma chamada HTTP**. Sem credencial: a API é pública. |
 
 ## Credenciais são por NOME, não por valor
 

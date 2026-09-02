@@ -9,7 +9,7 @@
 
 ### O tenant nasce do `companyName` do `/setup`: confira depois
 
-O `/setup` cria **um** tenant a partir do `companyName` que quem preenche o form digita. **Instrua o usuário a digitar `Indica Fácil Agents`** (o default fixo; não perguntamos um nome, ver SKILL.md). No **real**, é o usuário que digita e pode sair diferente. Depois de conectar o MCP, rode **`tenant_list`** e **confira** o `name`/`slug`:
+O `/setup` cria **um** tenant a partir do `companyName` que quem preenche o form digita. **Instrua o usuário a digitar o nome da empresa dele** (numa agência, o do cliente): o campo é rotulado "Nome da empresa" no produto e é dele que o tenant nasce, então `Indica Fácil Agents` como nome de tenant de cliente é ruído, e numa agência com vários clientes atrapalha de verdade. `Indica Fácil Agents` serve só para quem não se importa. Sai diferente porque **é para sair**. Depois de conectar o MCP, rode **`tenant_list`** e **confira** o `name`/`slug`:
 - é `Indica Fácil Agents` (ou o que o usuário digitou) → siga.
 - divergiu do esperado → **NÃO crie outro tenant** (`tenant_create` é proibido, ver abaixo): siga com o que existe e **avise o usuário** da divergência. Renomear, se ele quiser, é `tenant_update` (não um tenant novo).
 
