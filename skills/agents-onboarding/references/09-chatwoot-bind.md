@@ -34,6 +34,8 @@ Conecta as contas selecionadas (cria a instância + sincroniza os inboxes pra ag
 
 > **Pré: o inbox precisa existir no Chatwoot.** Se o usuário ainda não criou a caixa de entrada (WhatsApp, widget de site, etc.), entregue o **link direto da página de criação**, nunca "vá em Configurações → Caixas de entrada": `<base_url_do_chatwoot>/app/accounts/<accountId>/settings/inboxes/new` (conta 1 no install padrão). O deep-link abre direto o assistente de novo canal; o usuário cria o inbox e volta pro bind. O mesmo link também está na tela **Canais** do console (botão "Criar caixa de entrada no Chatwoot", por conta).
 
+> **Se o canal for WhatsApp pela API oficial (Cloud API), o trabalho pesado acontece ANTES do assistente.** O Chatwoot só pede o que a Meta já emitiu (`phone_number_id`, `business_account_id` da WABA e o token permanente); criar o app na Meta, verificar o número e gerar o token é um fluxo à parte, do lado da Meta, e nenhuma tool do MCP alcança isso (nem a inbox em si: ela nasce no assistente, como acima). Entregue ao usuário a documentação oficial, que vai da criação do app na Meta até a inbox pronta no Chatwoot: [a documentação oficial do Chatwoot para a Cloud API](https://www.chatwoot.com/docs/product/channels/whatsapp/whatsapp-cloud). Ele volta pro bind quando a inbox existir; o bind é o mesmo em qualquer canal.
+
 ```jsonc
 inbox_bind { "inbox_id":"<id do inbox no Indica Fácil Agents>", "agent_id":"<id do agente>" }   // dry_run:false pra aplicar
 ```

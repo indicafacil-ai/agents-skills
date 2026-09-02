@@ -1,6 +1,6 @@
 # Migração da Secretária v3 (n8n) para a V4
 
-Ramificação das etapas **1b, 8, 9 e 10** quando o inventário acha uma Secretária v3. Não é uma jornada paralela: o deploy, o `/setup` e o MCP são os mesmos. O que muda é **de onde sai o agente** (da v3, não da Maria) e **como ele entra no ar** (cutover, não simples bind).
+Ramificação das etapas **1b, 8, 9 e 10** quando o inventário acha uma Secretária v3. Não é uma jornada paralela: o deploy, o `/setup` e o MCP são os mesmos. O que muda é **de onde sai o agente** (da v3, não da Esther) e **como ele entra no ar** (cutover, não simples bind).
 
 **O princípio que rege tudo aqui:** a v3 fica de pé até o fim, e continua de pé depois. Ela é o plano de rollback. **Deploy, workflows, memória e credenciais ficam intocados.** A única coisa que esta ramificação mexe é o **gatilho** dela, no cutover, e mexe de um jeito que volta em segundos (seção 8). Desligar a v3 de vez existe, é a seção 9, e acontece dias depois do cutover com o usuário decidindo, nunca dentro da migração.
 

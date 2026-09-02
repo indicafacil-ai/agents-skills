@@ -14,7 +14,7 @@ Achada a causa, ajuste na camada que a explica. Via **console** (editor do agent
 
 ## Trocar/adaptar o system prompt (preserve a estrutura, troque só o conteúdo)
 
-O prompt é um **campo único** (`Agent.systemPrompt`); a "estrutura base" que o runtime garante (grounding da KB, variáveis `{{...}}`, contexto MCP, budget de ferramentas) é anexada **automaticamente** e não vive no texto do operador. Ao adaptar o prompt (do sample Maria pra outro negócio, ou reescrevendo o de um agente vivo):
+O prompt é um **campo único** (`Agent.systemPrompt`); a "estrutura base" que o runtime garante (grounding da KB, variáveis `{{...}}`, contexto MCP, budget de ferramentas) é anexada **automaticamente** e não vive no texto do operador. Ao adaptar o prompt (do sample Esther pra outro negócio, ou reescrevendo o de um agente vivo):
 
 - **Preserve a estrutura base do prompt original**: as seções (identidade, tom, regras de atendimento, uso das ferramentas, políticas), a ordem e o formato. Não descarte o esqueleto que já funciona; troque o **conteúdo**, não a arquitetura.
 - **Troque só o conteúdo específico do negócio**: nome, serviços, horários, endereço, políticas, exemplos. Mantenha as instruções de uso de ferramentas (agenda, pagamento, KB) coerentes com as tools que o agente **realmente** tem.
@@ -37,8 +37,10 @@ O editor (`Tools` + `Knowledge`) edita **um** working set de grants e faz **PUT 
 - **stt**: transcreve áudios recebidos (on por padrão, efetivo só com credencial; `provider`/`model`/`language`/`credentialRef`).
 - **tts**: responde em áudio: `mode` `never`|`mirror`|`preference` (default `never`).
 - **split**: quebra a resposta em balões com "digitando" (off por padrão; só texto).
-- **serviceWindow**: janela de 24h do WhatsApp para envios **proativos**: dentro = livre, fora = template HSM ou nota (on por padrão). Não afeta a resposta reativa.
+- **serviceWindow**: janela de 24h do WhatsApp para envios **proativos**: dentro = livre, fora = template HSM ou nota (on por padrão). Não afeta a resposta reativa, e só vale na API oficial (abaixo).
 - **grounding**: limiar de distância (`maxDistance`) da busca na KB (distinto do grant RAG da aba Knowledge).
+
+> **A janela de 24h existe só na API oficial, e o `channel_type` não distingue.** Toda inbox de WhatsApp no Chatwoot é `Channel::Whatsapp`; quem decide é o **`provider`**: `whatsapp_cloud` (Cloud API) e `default` (BSP 360dialog) têm janela e template, `baileys`/`zapi` não têm nenhum dos dois. Numa inbox sem janela o proativo sai livre mesmo com o `serviceWindow` ligado, então "o gate não segurou" costuma ser o provider da inbox, não a config: confira o provider antes de mexer no bloco. Trocar pro canal oficial é trabalho do lado da Meta + Chatwoot, fora da agents, e a documentação oficial vai da criação do app na Meta até a inbox pronta: [a documentação oficial do Chatwoot para a Cloud API](https://www.chatwoot.com/docs/product/channels/whatsapp/whatsapp-cloud).
 
 ## Credenciais
 
