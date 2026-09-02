@@ -4,6 +4,8 @@
 
 ## 1. Importar (`agent_import`, mcp:write)
 
+> **Havendo uma secretária em n8n na VPS (etapa 1b), o agente sai dela**, não da Esther: os workflows do n8n são a fonte, e a conversão tem armadilhas próprias (o prompt é uma expressão, nomes de ferramenta espalhados, chave de atributo sem vocabulário fixo). Ver [`migracao-v3.md`](migracao-v3.md) seções 2 a 4 antes de montar o arquivo.
+
 A skill traz o **agente padrão** vendorado em `samples/agents/esther-clinica-indicafacil.json` ("Esther", recepção da Clínica IndicaFácil.AI fictícia: agendamento, FAQ via KB, voz, Asaas). **Importe-o por padrão**; só use outro export se o usuário trouxer o dele. Leia o arquivo e passe o conteúdo como `export`:
 
 ```jsonc
