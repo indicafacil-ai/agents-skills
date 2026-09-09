@@ -1,12 +1,12 @@
 # 08: Import do agente + credenciais + embedding + KB
 
-> **Ao falar com o usuário** nesta etapa, descreva o resultado, não a mecânica: "vou criar o agente de atendimento (a Esther, uma recepcionista de exemplo); ele nasce desligado e em modo de teste, então não fala com cliente até você liberar". Na hora de pedir as chaves que faltam, diga "faltam algumas chaves (ex.: a da OpenAI) pro agente funcionar; vou te mandar um link direto pra colar cada uma com segurança, elas não passam por mim". **Não** cite `agent_import`/`credential_create`/"pending"/"deeplink"/"vault"/"tenant". Frases boas × ruins em `guardrails.md`.
+> **Ao falar com o usuário** nesta etapa, descreva o resultado, não a mecânica: "vou criar o agente de atendimento (a Esther, uma recepcionista de exemplo); ele nasce desligado e em modo de teste, então não fala com cliente até você liberar". **Havendo uma secretária em n8n, a frase é outra**, porque o agente é o dele e não um exemplo: "vou montar o seu agente a partir da secretária que você já roda; ele nasce desligado e em modo de teste, e a sua atual continua no ar o tempo todo". Na hora de pedir as chaves que faltam, diga "faltam algumas chaves (ex.: a da OpenAI) pro agente funcionar; vou te mandar um link direto pra colar cada uma com segurança, elas não passam por mim". **Não** cite `agent_import`/`credential_create`/"pending"/"deeplink"/"vault"/"tenant". Frases boas × ruins em `guardrails.md`.
 
 ## 1. Importar (`agent_import`, mcp:write)
 
 > **Havendo uma secretária em n8n na VPS (etapa 1b), o agente sai dela**, não da Esther: os workflows do n8n são a fonte, e a conversão tem armadilhas próprias (o prompt é uma expressão, nomes de ferramenta espalhados, chave de atributo sem vocabulário fixo). Ver [`migracao-v3.md`](migracao-v3.md) seções 2 a 4 antes de montar o arquivo.
 
-A skill traz o **agente padrão** vendorado em `samples/agents/esther-clinica-indicafacil.json` ("Esther", recepção da Clínica IndicaFácil.AI fictícia: agendamento, FAQ via KB, voz, Asaas). **Importe-o por padrão**; só use outro export se o usuário trouxer o dele. Leia o arquivo e passe o conteúdo como `export`:
+A skill traz o **agente padrão** vendorado em `samples/agents/esther-clinica-indicafacil.json` ("Esther", recepção da Clínica IndicaFácil.AI fictícia: agendamento, FAQ via KB, voz, Asaas). **Importe-o por padrão**, e use outro export em dois casos: o usuário trouxe o dele, **ou existe uma secretária em n8n** e o bundle é o que você montou a partir dela ([`migracao-v3.md`](migracao-v3.md) §4). Nesses casos a Esther não entra, nem como ponto de partida. Leia o arquivo e passe o conteúdo como `export`:
 
 ```jsonc
 agent_import { "export": <conteúdo de samples/agents/esther-clinica-indicafacil.json>, "tenant": "<slug do tenant_list>" }   // dry_run:true → preview, depois dry_run:false

@@ -259,6 +259,8 @@ Cubra todas as ferramentas da origem, uma a uma, e o ramo de erro de cada uma.
 
 **A ordem não é estética. Quatro passos, nesta sequência:**
 
+**Esta sequência pressupõe janela de baixo volume, e isso é pré-condição, não preferência.** Entre o corte e o vínculo ninguém atende, e a triagem leva minutos: mensagem que chega nesse intervalo fica visível na conversa, sem ninguém avisado. Quem não pode ter essa janela, uma operação de plantão ou 24/7, não segue isto direto: levante e classifique as conversas **antes** do passo 1, com a v3 ainda no ar, e deixe para a janela só reler a lista e aplicar. Encurta o intervalo ao mínimo sem inverter a ordem.
+
 **Antes de tudo, confirme que a migração é do tráfego inteiro da v3.** Os dois caminhos de corte são globais: o webhook é **de conta** e o workflow é um só. Se a v3 atende alguma caixa que não entra nesta migração, cortar derruba o atendimento dela também, e não existe meia-dose aqui. Levante quais caixas a v3 serve e compare com as que vão ser vinculadas; sobrando alguma, **pare e diga ao usuário**: migração parcial não é esta jornada.
 
 1. **Corte a v3** por um dos dois caminhos: apagar o webhook de conta no Chatwoot, ou desativar o workflow no n8n. Medido: ~120 ms. **Antes de apagar, anote o que o rollback vai precisar**: os eventos assinados, o id, e **qual dos dois caminhos você usou**, porque o rollback desfaz esse e só esse. **A URL não entra no registro**: webhook de n8n sem autenticação é credencial, e o guardrail de segredo vale para ela igual. Ela é redescobrível na hora, no nó de gatilho do workflow, que continua de pé.
@@ -307,7 +309,7 @@ Numa conversa que a V4 nunca atendeu, o primeiro turno recebe as mensagens de en
 
 Mande a primeira mensagem você mesmo, de um número que não é o de teste habitual. Depois fique olhando as primeiras conversas reais, uma a uma, na primeira hora.
 
-**Abra o agente no console e leia os alertas de configuração antes de dar a migração por validada.** Não espere que eles cheguem sozinhos: as tools de escrita devolvem o que mudaram e nada mais, o `agent_update` devolve o diff e o `inbox_bind` devolve a caixa. A saúde de configuração é montada na tela do editor, então ela só existe se alguém for olhar. Alerta ali é motivo de parar, não de seguir.
+**Leia a saúde de configuração que as próprias escritas devolvem, e não dê a migração por validada com alerta em pé.** `agent_create`, `agent_update`, `agent_clone`, `agent_import`, `agent_tools_set` e `agent_settings_set` devolvem `configHealth` na resposta da chamada que causou o problema, então o alerta chega em quem o causou, sem depender de alguém lembrar de olhar. Escrita que não é do agente não carrega o campo: o `inbox_bind` devolve a caixa e nada mais. Alerta ali é motivo de parar, não de seguir. O console continua entrando só para preencher segredo, que não tem caminho de API.
 
 ---
 

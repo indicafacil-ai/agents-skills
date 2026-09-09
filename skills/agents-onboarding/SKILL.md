@@ -70,7 +70,7 @@ O **usuário** cria o 1º admin no browser do orquestrador (Coolify/Portainer), 
 ## Fora de escopo desta skill (por enquanto)
 
 - **Trilhas dedicadas por painel** (Easypanel/Dokploy/CapRover/etc.): por escolha, não existem. Use o **Tier C** (compose genérico) e adapte ao painel com seu conhecimento dele.
-- Migração/atualização de serviços incompatíveis (a etapa 1b **detecta e sinaliza**; a migração em si é decisão do usuário).
+- Migração/atualização de **serviços incompatíveis** (Chatwoot antigo, Postgres fora de versão): a etapa 1b **detecta e sinaliza**, e a migração em si é decisão do usuário. **A Secretária v3 é outra coisa e ESTÁ no escopo** (ver [`migracao-v3.md`](references/migracao-v3.md)): ela não é infraestrutura para atualizar, é a configuração do agente morando em outra ferramenta, e vira **fonte de leitura** para a etapa 8.
 - Caminho manual (sem IA) e adapters de agente não-Claude-Code (Codex/Hermes).
 
 Os três tiers de deploy (A/B/C) estão **dentro** do escopo (a etapa 1c roteia).
