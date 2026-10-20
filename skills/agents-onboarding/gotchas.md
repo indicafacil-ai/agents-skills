@@ -95,7 +95,7 @@ Não há heredoc (`<<'EOF'` é só POSIX) nem `<` de stdin no PowerShell, por is
 
 ### Indica Fácil Agents Pro ≠ licença Chatwoot avulsa (precisa da comunidade)
 
-A edição **Pro** do Indica Fácil Agents (`edition: "pro"`, marcador) usa imagem privada no GHCR, liberada **só pra membros da comunidade** (`isCommunityGrant`). Uma licença Chatwoot Pro **avulsa** NÃO desbloqueia o Indica Fácil Agents. O PAT de leitura do GHCR é **seu** (cobre todos os pacotes privados a que a sua conta tem acesso): se Chatwoot e o Indica Fácil Agents são ambos Pro, é **um único** `docker login`: não logue duas vezes. `free` = imagem pública, **sem** `docker login`.
+A edição **Pro** do Indica Fácil Agents (`edition: "pro"`, marcador) usa imagem privada no GHCR, liberada **só pra membros da comunidade** (`isCommunityGrant`). Uma licença Chatwoot Pro **avulsa** NÃO desbloqueia o Indica Fácil Agents. O PAT de leitura do GHCR é **seu** (cobre todos os pacotes privados a que a sua conta tem acesso): se Chatwoot e o Indica Fácil Agents são ambos Pro, é **um único** `docker login`: não logue duas vezes. 🔴 `free` **também** usa imagem privada desde 20/10 (era pública): o mesmo `docker login` vale para as duas edições.
 
 ### Chatwoot OSS não faz `docker login` (mas inclui Baileys)
 
