@@ -105,7 +105,7 @@ Crie (ou reaproveite) um projeto com o **nome padrão `Indica Fácil Agents`** (
 
 ## Registry privado (só Pro)
 
-As imagens **Pro** (`ghcr.io/indicafacil-ai/chatwoot-pro`, `.../agents-pro`) são privadas no GHCR: o Coolify precisa da credencial registrada **antes** de puxar, senão o deploy falha (pull denied / 401). Só no caminho Pro:
+As imagens **Pro** (`ghcr.io/indicafacil-ai/chatwoot-pro`, `.../idagent-pro`) são privadas no GHCR: o Coolify precisa da credencial registrada **antes** de puxar, senão o deploy falha (pull denied / 401). Só no caminho Pro:
 
 1. Gere um **Personal Access Token** do GitHub com o escopo **`read:packages`** (clássico, ou fine-grained com permissão de leitura em packages) e grave-o num arquivo `0600`:
    ```sh
@@ -114,4 +114,4 @@ As imagens **Pro** (`ghcr.io/indicafacil-ai/chatwoot-pro`, `.../agents-pro`) sã
    Um PAT de leitura basta — **nunca** use um token com escopo de escrita aqui, e **nunca** logue o valor.
 2. Registre no Coolify (Servers → Registries, ou via API) apontando pra `ghcr.io`, com o seu **usuário do GitHub** e o token de `ghcr.secret`.
 
-No caminho **OSS** (imagem pública), pule isto inteiro — `ghcr.io/indicafacil-ai/chatwoot` e `.../agents` são públicas e não pedem login.
+No caminho **OSS** do Chatwoot, pule isto inteiro — `ghcr.io/indicafacil-ai/chatwoot` é pública e não pede login. 🔴 `.../agents` **não** é mais: a imagem do agente ficou privada em 20/10, nas duas edições, e pede o login mesmo no Free.
