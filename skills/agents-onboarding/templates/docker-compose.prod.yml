@@ -16,10 +16,12 @@
 
 services:
   agents:
-    # Edition-driven: Free (default, public image) vs Pro (set AGENTS_IMAGE to the private
-    # Harbor image, project `agents`, after `docker login` — hub: create_registry_credential, per-user).
-    # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: ${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/agents:latest}
+    # Edition-driven: Free (default) vs Pro (set AGENTS_IMAGE to the private
+    # Harbor image, project `idagent`, after `docker login` — hub: create_registry_credential, per-user).
+    # 🔴 BOTH editions are PRIVATE on GHCR since 2026-10-20, so the Free default needs the same
+    # `docker login` Pro needs, with a PAT carrying `read:packages`. A text saying otherwise earns a
+    # `denied` with no hint, because the reader will not even look for a credential.
+    image: ${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/idagent:latest}
     pull_policy: always
     restart: always
     # NOTE: no `command` here on purpose — the image's default entrypoint already runs, in order:
