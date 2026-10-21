@@ -49,7 +49,7 @@ python3 scripts/remote.py --ssh root@<VPS_IP> --ssh-opts "-i <chave>" --script-f
 | **Coolify** | `coollabsio/coolify` (+ `coolify-db`/`-redis`/`-realtime`, `-proxy`=`traefik`) | container `coolify` + API `:8000`=200 | tag da imagem (ex. `:4.1.2`) |
 | **Chatwoot** | imagem com `chatwoot` (+ `sidekiq`, e `baileys-api` para WhatsApp) | `chatwoot` + `sidekiq` Up | tag (`:latest` → ver via `/version`) |
 | **Langfuse** | `langfuse/langfuse` (+ `-worker`, `clickhouse`, **`minio`**) | web+worker+clickhouse+minio Up | tag (ex. `:3`) |
-| **Indica Fácil Agents** | `ghcr.io/indicafacil-ai/agents` (+ `pgvector`) | container Up + `/api/health` | tag |
+| **Indica Fácil Agents** | `ghcr.io/indicafacil-ai/idagent` ou `idagent-pro`; `agents` em instalação anterior a 20/10 (+ `pgvector`) | container Up + `/api/health` | tag |
 | **Secretária em n8n (v3)** | `n8nio/n8n` (+ `n8nio/runners`), **e** as tabelas `n8n_historico_mensagens`, `n8n_fila_mensagens`, `n8n_status_atendimento` no Postgres dele | container Up | tag |
 
 As portas das apps **não** ficam expostas no host (atrás do Traefik); só Coolify (`:8000`) e o proxy (`:80`/`:443`) escutam. `curl localhost:80` sem o Host certo dá 404/503 (esperado). Pra health de uma app, use o FQDN dela.

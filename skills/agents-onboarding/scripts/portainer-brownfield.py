@@ -20,6 +20,12 @@ def get(path):
 
 # image substring -> logical service name (order matters: most specific first)
 FINGERPRINTS = [
+    # 🔴 TRES nomes, e os tres coexistem: `idagent` (Free depois do rename de 20/10),
+    # `idagent-pro` (Pro) e `agents` (instalacoes que subiram antes e seguem no nome velho).
+    # ⚠️ `idagent` NAO contem `agents` — falta o `s`. Enquanto so havia a linha de `agents`, este
+    # probe respondia "ausente" para um agente que estava RODANDO, e sem erro nenhum: a resposta
+    # errada com cara de resposta boa. Ja valia para `idagent-pro` desde 20/10.
+    ("idagent", "agents"),
     ("agents", "agents"),
     ("chatwoot-pro", "chatwoot-pro"),
     ("chatwoot", "chatwoot-oss"),

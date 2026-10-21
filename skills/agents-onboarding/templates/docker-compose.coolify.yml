@@ -1,10 +1,11 @@
 services:
   agents:
-    # Edition-driven: Free (default, public image) vs Pro — for Pro, set the AGENTS_IMAGE env on
-    # the Coolify service to the private Harbor image (project `agents`) AND register the Harbor
+    # Edition-driven: Free (default) vs Pro — for Pro, set the AGENTS_IMAGE env on
+    # the Coolify service to the private Harbor image (project `idagent`) AND register the Harbor
     # registry credential in Coolify (hub: create_registry_credential, per-user, same as Chatwoot Pro).
-    # PLACEHOLDER: the public Free image is not published yet — swap `agents` once it exists.
-    image: '${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/agents:latest}'
+    # 🔴 BOTH editions are PRIVATE on GHCR since 2026-10-20, so even the Free default needs the
+    # registry credential registered in Coolify before the pull.
+    image: '${AGENTS_IMAGE:-ghcr.io/indicafacil-ai/idagent:latest}'
     pull_policy: always
     volumes:
       - 'storage:/app/storage'
