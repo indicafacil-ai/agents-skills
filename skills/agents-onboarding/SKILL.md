@@ -63,6 +63,8 @@ Abra a referência da etapa **antes** de executá-la (carga sob demanda). O flux
 - **Tier B** (Portainer): [`references/deploy-b-portainer.md`](references/deploy-b-portainer.md)
 - **Tier C** (compose genérico, VM crua ou qualquer painel): [`references/deploy-c-compose.md`](references/deploy-c-compose.md)
 
+**Revalidar uma instância que já está no ar** (o usuário quer conferir a instalação, ou algo de infraestrutura quebrou depois dela) não é outra jornada: rode só a sondagem da [1b](references/01b-brownfield.md), a checagem do Coolify no próprio host da [etapa 2](references/02-coolify.md) (Tier A) e a [10](references/10-validate-e2e.md). A instância atende clientes: qualquer conserto, inclusive o `heal-localhost`, só com OK do usuário.
+
 ## Gates de conta (o usuário cria cada admin)
 
 O **usuário** cria o 1º admin no browser do orquestrador (Coolify/Portainer), do Chatwoot e do Indica Fácil Agents (`/setup`). Você **entrega o link + a instrução e espera** (no Coolify, `coolify.py wait-admin`; no Indica Fácil Agents, a URL `/setup`, que **não pede token**: o onboarding sobe com `SETUP_TOKEN_REQUIRED=false`), **nunca** cria essas contas por conta própria. Depois do admin criado, o token e o resto da config são com você. **Exceção: o Langfuse** é headless (`LANGFUSE_INIT_*`, etapa 5): você semeia a conta (usuário OWNER) e o operador só faz **login** (`/auth/sign-in`); como ele não vê o seed acontecer, faça um **handoff explícito** (anuncie o painel no ar, entregue URL + e-mail + senha temporária) e **espere ele confirmar que entrou** antes de seguir. Detalhes em `guardrails.md`.
