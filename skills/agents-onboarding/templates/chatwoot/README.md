@@ -10,7 +10,7 @@ The inbox Indica Fácil Agents plugs into. The onboarding installs Chatwoot as p
 
 **Both editions work with Indica Fácil Agents**: the integration is the standard Chatwoot Agent Bot + API
 (see `docs/chatwoot.md`). OSS is **not** a downgrade of compatibility, only of
-Pro-exclusive features (Kanban). The Baileys WhatsApp provider ships in **both** editions.
+Pro-exclusive features (Kanban). WhatsApp (native) ships in **both** editions.
 
 **Edition source (in order).** The onboarding CLI captures the operator's choice up front and writes it to
 `~/.indica-facil/onboarding.json` (`{ "chatwootTier": "pro" | "community", "chatwootLicenseId": "<id>" }`).
@@ -28,8 +28,16 @@ intent no registry check can express: an operator may own a license yet still pi
 | `docker-compose.coolify.yml` | **Coolify** (magic vars; secrets auto-generated). Pro image by default. |
 | `.env.example` | Template for the generic flavor. `cp .env.example .env`, fill every `CHANGE_ME`. |
 
-Topology (both): `chatwoot` (web) + `sidekiq` + `postgres` (pgvector) + `redis` + `baileys-api`
-(the Baileys WhatsApp provider, **both editions** — public image).
+Topology (both): `chatwoot` (web) + `sidekiq` + `postgres` (pgvector) + `redis`. WhatsApp (native) runs
+inside `sidekiq`: the image starts its connector next to the worker, on by default, with a database of its own
+(`<POSTGRES_DB>_whatsapp_connector`) that it creates on the first start, so the PostgreSQL user must be able to
+create databases. It has no service, port or secret of its own. `WHATSAPP_CONNECTOR_ENABLED=false` on both
+Chatwoot containers turns it off.
+
+Baileys and Z-API still work but show as legacy in Chatwoot; a new stack does not ship `baileys-api`. An
+existing stack that already runs one keeps it (its inboxes depend on it), and one that runs the connector as a
+service of its own must set `WHATSAPP_CONNECTOR_EMBEDDED=false` on both Chatwoot containers **before** moving
+to an image that embeds it, or a second connector competes for the same sessions.
 
 ## Deploy (generic: Portainer / plain Docker)
 

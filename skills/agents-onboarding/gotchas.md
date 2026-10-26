@@ -97,7 +97,7 @@ Não há heredoc (`<<'EOF'` é só POSIX) nem `<` de stdin no PowerShell, por is
 
 A edição **Pro** do Indica Fácil Agents (`edition: "pro"`, marcador) usa imagem privada no GHCR, liberada **só pra membros da comunidade** (`isCommunityGrant`). Uma licença Chatwoot Pro **avulsa** NÃO desbloqueia o Indica Fácil Agents. O PAT de leitura do GHCR é **seu** (cobre todos os pacotes privados a que a sua conta tem acesso): se Chatwoot e o Indica Fácil Agents são ambos Pro, é **um único** `docker login`: não logue duas vezes. 🔴 `free` **também** usa imagem privada desde 20/10 (era pública): o mesmo `docker login` vale para as duas edições.
 
-### Chatwoot OSS não faz `docker login` (mas inclui Baileys)
+### Chatwoot OSS não faz `docker login` (e já traz o WhatsApp nativo)
 
 `chatwootTier: "community"` (OSS) usa a imagem pública `ghcr.io/indicafacil-ai/chatwoot` (nosso fork), **sem** `docker login` no GHCR. O `baileys-api` **roda também no OSS** (imagem pública `ghcr.io/indicafacil-ai/baileys-api`, parte do fork — **não** remova). Só o `pro` faz `docker login` no GHCR + imagem privada `chatwoot-pro` (o que o Pro adiciona é o **Kanban**, não o Baileys). **Não** rode `docker login` nem provisione credencial de registry no caminho OSS (o pull público não precisa dela).
 

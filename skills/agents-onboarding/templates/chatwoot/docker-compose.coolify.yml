@@ -32,12 +32,10 @@ services:
       - 'SECRET_KEY_BASE=${SERVICE_PASSWORD_64_SECRETKEYBASE}'
       - 'REDIS_URL=redis://redis:6379'
       - 'REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}'
-      - 'BAILEYS_PROVIDER_DEFAULT_CLIENT_NAME=${BAILEYS_PROVIDER_DEFAULT_CLIENT_NAME:-Chatwoot}'
-      - 'BAILEYS_PROVIDER_DEFAULT_URL=http://baileys-api:3025'
-      - 'BAILEYS_PROVIDER_DEFAULT_API_KEY=${SERVICE_PASSWORD_64_DEFAULTAPIKEY}'
-      - BAILEYS_PROVIDER_USE_INTERNAL_HOST_URL=true
-      - 'MAILER_SENDER_EMAIL=${MAILER_SENDER_EMAIL}'
-      - 'RESEND_API_KEY=${RESEND_API_KEY}'
+      - 'MAILER_SENDER_EMAIL=${MAILER_SENDER_EMAIL:-}'
+      - 'RESEND_API_KEY=${RESEND_API_KEY:-}'
+      - 'WHATSAPP_CONNECTOR_ENABLED=${WHATSAPP_CONNECTOR_ENABLED:-true}'
+      - 'WHATSAPP_CONNECTOR_EMBEDDED=${WHATSAPP_CONNECTOR_EMBEDDED:-true}'
     entrypoint: docker/entrypoints/rails.sh
     command:
       - sh
@@ -73,15 +71,18 @@ services:
       - 'SECRET_KEY_BASE=${SERVICE_PASSWORD_64_SECRETKEYBASE}'
       - 'REDIS_URL=redis://redis:6379'
       - 'REDIS_PASSWORD=${SERVICE_PASSWORD_REDIS}'
-      - 'BAILEYS_PROVIDER_DEFAULT_URL=http://baileys-api:3025'
-      - 'BAILEYS_PROVIDER_DEFAULT_API_KEY=${SERVICE_PASSWORD_64_DEFAULTAPIKEY}'
-      - BAILEYS_PROVIDER_USE_INTERNAL_HOST_URL=true
-      - 'MAILER_SENDER_EMAIL=${MAILER_SENDER_EMAIL}'
-      - 'RESEND_API_KEY=${RESEND_API_KEY}'
+      - 'MAILER_SENDER_EMAIL=${MAILER_SENDER_EMAIL:-}'
+      - 'RESEND_API_KEY=${RESEND_API_KEY:-}'
+      - 'WHATSAPP_CONNECTOR_ENABLED=${WHATSAPP_CONNECTOR_ENABLED:-true}'
+      - 'WHATSAPP_CONNECTOR_EMBEDDED=${WHATSAPP_CONNECTOR_EMBEDDED:-true}'
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    # Sidekiq and the embedded WhatsApp connector both drain on SIGTERM: the connector hands its
+    # sessions back before exiting. Docker's default of 10 s cuts that short.
+    stop_grace_period: 30s
     restart: always
     healthcheck:
-      test: ['CMD-SHELL', 'ps aux | grep [s]idekiq']
+      # The entrypoint scripts carry the word sidekiq in their argv too; drop them from the match.
+      test: ['CMD-SHELL', 'ps aux | grep "[s]idekiq" | grep -qv entrypoints']
       interval: 20s
       timeout: 10s
       retries: 5

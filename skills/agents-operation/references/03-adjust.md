@@ -11,6 +11,7 @@ Achada a causa, ajuste na camada que a explica. Via **console** (editor do agent
 | Usou/não usou a tool certa | **Grants de ferramentas** | editor → Tools | `agent_tools_set` |
 | Resposta sem fundamento na base | **Grounding/KB** | editor → Knowledge | `agent_tools_set` (grant RAG), `knowledge_*` |
 | Cadência/áudio/janela/agrupamento | **Behavior** | editor → Behavior | `agent_settings_set` |
+| Documento (orçamento, proposta, recibo) com campo, bloco ou texto errado, ou que o agente não emite | **Modelo de documento** | Componentes → Modelos de documento (só texto, nome, numeração e estilo) | `document_template_*` + `agent_tools_set` (grant DOCUMENT) |
 
 ## Trocar/adaptar o system prompt (preserve a estrutura, troque só o conteúdo)
 
