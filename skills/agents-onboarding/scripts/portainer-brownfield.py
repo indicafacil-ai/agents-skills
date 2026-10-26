@@ -20,16 +20,11 @@ def get(path):
 
 # image substring -> logical service name (order matters: most specific first)
 FINGERPRINTS = [
-    # 🔴 TRES nomes, e os tres coexistem: `idagent` (Free depois do rename de 20/10),
-    # `idagent-pro` (Pro) e `agents` (instalacoes que subiram antes e seguem no nome velho).
-    # ⚠️ `idagent` NAO contem `agents` — falta o `s`. Enquanto so havia a linha de `agents`, este
-    # probe respondia "ausente" para um agente que estava RODANDO, e sem erro nenhum: a resposta
-    # errada com cara de resposta boa. Ja valia para `idagent-pro` desde 20/10.
-    ("idagent", "agents"),
     ("agents", "agents"),
     ("chatwoot-pro", "chatwoot-pro"),
     ("chatwoot", "chatwoot-oss"),
     ("langfuse", "langfuse"),
+    ("whatsapp-connector", "whatsapp-connector"),
     ("baileys", "baileys"),
     ("pgvector", "postgres-pgvector"),
     ("postgres", "postgres"),
@@ -99,25 +94,35 @@ def decide(service):
 
 
 print("\n=== Per-service decision for the agents onboarding ===")
-# Chatwoot has TWO valid variants: chatwoot-pro (private GHCR image) and chatwoot OSS
-# (public image). Both satisfy the agents integration (Agent Bot API). Pro adds Kanban (private image);
-# Baileys (baileys-api) ships in our fork on BOTH editions, but a brownfield "oss" hit may be upstream
-# Chatwoot (any non-pro image), so Baileys is only assured on our fork.
+# Chatwoot has TWO valid variants: chatwoot-pro (private image) and chatwoot OSS
+# (public image). Both satisfy the agents integration (Agent Bot API). Pro adds Kanban (private image).
+# WhatsApp (native) runs inside sidekiq on the Chatwoot builds that ship the connector, in both editions; a
+# brownfield "oss" hit may be upstream Chatwoot (any non-pro image), which has neither.
 # So OSS is REUSABLE, not incompatible; an absent Chatwoot installs pro-if-subscribed else oss.
 def decide_chatwoot():
     pro = [h for h in inv.get("chatwoot-pro", []) if h["health"] == "healthy"]
     oss = [h for h in inv.get("chatwoot-oss", []) if h["health"] == "healthy"]
     if pro:
-        return "PRESENT(pro)+healthy -> REUSE (pro image; Kanban + Baileys)"
+        return "PRESENT(pro)+healthy -> REUSE (pro image; Kanban)"
     if oss:
-        return "PRESENT(oss)+healthy -> REUSE (OSS; no Kanban; Baileys if it's our fork)"
+        return "PRESENT(oss)+healthy -> REUSE (OSS; no Kanban)"
     if inv.get("chatwoot-pro") or inv.get("chatwoot-oss"):
         return "PRESENT+unhealthy -> flag/investigate"
-    return "ABSENT -> install (pro if the private image is reachable, else oss)"
+    return "ABSENT -> install (pro if hub subscription, else oss)"
 TARGETS = [
     ("agents", decide("agents"), "required (the app)"),
-    ("chatwoot", decide_chatwoot(), "required (integration); pro=private GHCR, oss=public"),
+    ("chatwoot", decide_chatwoot(), "required (integration); pro=Harbor/hub-sub, oss=public"),
     ("langfuse", decide("langfuse"), "optional (tracing)"),
 ]
 for name, dec, note in TARGETS:
     print("  %-16s %-46s | %s" % (name, dec, note))
+
+# WhatsApp services found next to Chatwoot. Neither is installed on a new stack: the Chatwoot image runs
+# the native connector inside sidekiq. What is already running stays, and one of them changes the upgrade.
+if inv.get("baileys"):
+    print("  %-16s %-46s | %s" % ("baileys", "PRESENT -> KEEP (legacy)", "its inboxes depend on it; do not remove"))
+if inv.get("whatsapp-connector"):
+    print("  %-16s %-46s | %s" % (
+        "whatsapp-conn", "PRESENT (separate) -> KEEP",
+        "set WHATSAPP_CONNECTOR_EMBEDDED=false on chatwoot+sidekiq BEFORE moving Chatwoot to an image that embeds it",
+    ))

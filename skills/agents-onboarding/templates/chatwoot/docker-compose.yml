@@ -32,11 +32,9 @@ x-chatwoot-env: &chatwoot-env
   SECRET_KEY_BASE: '${SECRET_KEY_BASE}'
   REDIS_URL: 'redis://redis:6379'
   REDIS_PASSWORD: '${REDIS_PASSWORD}'
-  # Baileys WhatsApp provider config (BOTH editions — the baileys-api service below runs in both).
-  BAILEYS_PROVIDER_DEFAULT_CLIENT_NAME: '${BAILEYS_CLIENT_NAME:-Chatwoot}'
-  BAILEYS_PROVIDER_DEFAULT_URL: 'http://baileys-api:3025'
-  BAILEYS_PROVIDER_DEFAULT_API_KEY: '${BAILEYS_DEFAULT_API_KEY:-}'
-  BAILEYS_PROVIDER_USE_INTERNAL_HOST_URL: 'true'
+  # WhatsApp (native): false turns the channel off; EMBEDDED=false keeps a separate connector instead.
+  WHATSAPP_CONNECTOR_ENABLED: '${WHATSAPP_CONNECTOR_ENABLED:-true}'
+  WHATSAPP_CONNECTOR_EMBEDDED: '${WHATSAPP_CONNECTOR_EMBEDDED:-true}'
 
 services:
   chatwoot:
@@ -74,9 +72,13 @@ services:
       redis: { condition: service_healthy }
     environment: *chatwoot-env
     command: ['bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml']
+    # Sidekiq and the embedded WhatsApp connector both drain on SIGTERM: the connector hands its
+    # sessions back before exiting. Docker's default of 10 s cuts that short.
+    stop_grace_period: 30s
     restart: always
     healthcheck:
-      test: ['CMD-SHELL', 'ps aux | grep "[s]idekiq" || exit 1']
+      # The entrypoint scripts carry the word sidekiq in their argv too; drop them from the match.
+      test: ['CMD-SHELL', 'ps aux | grep "[s]idekiq" | grep -qv entrypoints']
       interval: 20s
       timeout: 10s
       retries: 5
